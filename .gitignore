@@ -19,3 +19,4 @@ out/
 
 # Playwright E2E generated fixtures
 apps/web/tests/fixtures/generated/
+apps/web/test-results/
