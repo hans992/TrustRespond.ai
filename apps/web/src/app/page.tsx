@@ -9,6 +9,7 @@ import { TrustCenterShowcase } from "@/components/marketing/TrustCenterShowcase"
 import { PricingSection } from "@/components/marketing/PricingSection";
 import { ComparisonTable } from "@/components/marketing/ComparisonTable";
 import { FAQSection } from "@/components/marketing/FAQSection";
+import { PrivacyAtAGlance } from "@/components/marketing/PrivacyAtAGlance";
 import { GlowButton } from "@/components/ui/GlowButton";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
@@ -151,6 +152,7 @@ export default function LandingPage() {
         <PricingSection />
         <ComparisonTable />
         <FAQSection />
+        <PrivacyAtAGlance />
       </main>
       <Footer />
     </div>

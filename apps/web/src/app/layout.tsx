@@ -1,4 +1,6 @@
 import "./globals.css";
+import { ConditionalAnalytics } from "@/components/marketing/ConditionalAnalytics";
+import { CookieConsentBanner } from "@/components/marketing/CookieConsentBanner";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Inter } from "next/font/google";
@@ -55,6 +57,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body className={`${inter.className} min-h-screen bg-slate-950 text-slate-100 antialiased`}>
         {children}
+        <CookieConsentBanner />
+        <ConditionalAnalytics />
       </body>
     </html>
   );

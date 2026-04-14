@@ -129,6 +129,11 @@ export function Footer() {
           <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Legal</h3>
           <ul className="mt-2">
             <li>
+              <Link href="/#privacy-notice" className={footerLinkClass}>
+                Privacy summary (homepage)
+              </Link>
+            </li>
+            <li>
               <Link href="/legal/privacy-policy" className={footerLinkClass}>
                 Privacy Policy
               </Link>
@@ -151,6 +156,11 @@ export function Footer() {
             <li>
               <Link href="/legal/impressum" className={footerLinkClass}>
                 Impressum
+              </Link>
+            </li>
+            <li>
+              <Link href="/legal/ai-system-information" className={footerLinkClass}>
+                AI system information
               </Link>
             </li>
           </ul>

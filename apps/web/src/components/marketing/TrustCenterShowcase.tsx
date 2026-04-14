@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Shield } from "lucide-react";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { SectionBadge } from "@/components/ui/SectionBadge";
@@ -85,6 +86,13 @@ export function TrustCenterShowcase() {
                   EU AI Act Ready ✓
                 </span>
               </div>
+              <p className="mt-3 text-[11px] leading-snug text-neutral-600">
+                &quot;EU AI Act Ready&quot; reflects our transparency docs and human review workflow — not a government
+                certification.{" "}
+                <Link href="/legal/ai-system-information" className="text-accent-light/80 hover:text-accent-light hover:underline">
+                  Details
+                </Link>
+              </p>
 
               <div className="mt-6 space-y-2">
                 <div className="flex items-center justify-between border-b border-surface-border/30 py-2.5">

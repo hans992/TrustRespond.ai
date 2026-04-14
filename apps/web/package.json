@@ -25,6 +25,7 @@
     "@trustrespond/db": "0.1.0",
     "@trustrespond/parsers": "0.1.0",
     "@trustrespond/ui": "0.1.0",
+    "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.8.0",
