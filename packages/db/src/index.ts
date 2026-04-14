@@ -1,5 +1,15 @@
+export { chunkArray, DOCUMENT_CHUNKS_INSERT_BATCH_SIZE, EMBEDDING_TEXT_BATCH_SIZE } from "./batch";
 export type Tier = "free" | "starter" | "pro" | "enterprise";
 export type Confidence = "high" | "medium" | "low";
+
+/** Monthly questionnaire limits per plan tier; `null` means unlimited. */
+export const TIER_QUOTA_LIMITS: Record<Tier, number | null> = {
+  free: 1,
+  starter: 10,
+  pro: null,
+  enterprise: null
+};
+
 export const STORAGE_BUCKETS = {
   knowledgeBase: "knowledge-base",
   questionnaires: "questionnaires"
@@ -32,25 +42,4 @@ export interface TrustCenterPage {
   description: string;
   isPublished: boolean;
   ndaRequired: boolean;
-}
-
-const quotas: Record<Tier, number> = {
-  free: 1,
-  starter: 10,
-  pro: Number.MAX_SAFE_INTEGER,
-  enterprise: Number.MAX_SAFE_INTEGER
-};
-
-export class BillingService {
-  private usage = new Map<string, { used: number; remaining: number }>();
-
-  reserveQuestionnaireUsage(orgId: string, tier: Tier) {
-    const prior = this.usage.get(orgId) ?? { used: 0, remaining: quotas[tier] };
-    if (prior.remaining <= 0) {
-      throw new Error("Monthly questionnaire quota exceeded");
-    }
-    const next = { used: prior.used + 1, remaining: prior.remaining - 1 };
-    this.usage.set(orgId, next);
-    return next;
-  }
 }
