@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import { GlowButton } from "../ui/GlowButton";
 
 type NavItem = {
@@ -45,12 +46,12 @@ export function Navbar() {
       }`}
     >
       <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6">
-        <a href="/" className="inline-flex items-center gap-2">
+        <Link href="/" className="inline-flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-accent" />
           <span className="text-sm font-semibold text-neutral-50">
             TrustRespond<span className="text-accent">.ai</span>
           </span>
-        </a>
+        </Link>
 
         <div className="hidden items-center gap-8 md:flex">
           {navItems.map((item) => (

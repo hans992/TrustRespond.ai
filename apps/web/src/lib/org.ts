@@ -1,4 +1,6 @@
+import { createClient } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { supabaseEnv } from "@/lib/supabase/env";
 
 export async function getCurrentOrgContext() {
   const supabase = await createSupabaseServerClient();
@@ -9,6 +11,17 @@ export async function getCurrentOrgContext() {
 
   if (userError || !user) {
     throw new Error("Unauthorized");
+  }
+
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (serviceKey) {
+    const admin = createClient(supabaseEnv.NEXT_PUBLIC_SUPABASE_URL, serviceKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    });
+    const { data, error } = await admin.from("users").select("org_id").eq("id", user.id).maybeSingle();
+    if (!error && data?.org_id) {
+      return { supabase, userId: user.id, orgId: data.org_id as string };
+    }
   }
 
   const { data, error } = await supabase.from("users").select("org_id").eq("id", user.id).single();

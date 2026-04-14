@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -14,7 +14,11 @@ type GlowButtonProps = {
   children: ReactNode;
   className?: string;
   href?: string;
+  target?: string;
+  rel?: string;
   onClick?: () => void;
+  type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
+  disabled?: boolean;
 };
 
 function cn(...inputs: Array<string | false | null | undefined>) {
@@ -37,7 +41,9 @@ const sizeClasses: Record<GlowButtonSize, string> = {
 };
 
 const baseClasses =
-  "inline-flex items-center justify-center gap-2 cursor-pointer font-medium transition-all duration-200 ease-out";
+  "inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 ease-out";
+
+const disabledClasses = "cursor-not-allowed opacity-45 hover:!translate-y-0 hover:!shadow-none";
 
 const motionHover = { y: -2 };
 const motionTap = { y: 0 };
@@ -48,14 +54,34 @@ export function GlowButton({
   children,
   className,
   href,
+  target,
+  rel,
   onClick,
+  type = "button",
+  disabled = false,
 }: GlowButtonProps) {
-  const classes = cn(baseClasses, variantClasses[variant], sizeClasses[size], className);
+  const classes = cn(
+    baseClasses,
+    variantClasses[variant],
+    sizeClasses[size],
+    disabled && disabledClasses,
+    !disabled && "cursor-pointer",
+    className
+  );
 
   if (href) {
+    if (disabled) {
+      return (
+        <span className={cn(classes, "pointer-events-none")} aria-disabled="true">
+          {children}
+        </span>
+      );
+    }
     return (
       <motion.a
         href={href}
+        target={target}
+        rel={rel}
         className={classes}
         onClick={onClick}
         whileHover={variant === "ghost" ? { y: -1 } : motionHover}
@@ -69,11 +95,14 @@ export function GlowButton({
 
   return (
     <motion.button
-      type="button"
+      type={type === "submit" ? "submit" : "button"}
       className={classes}
       onClick={onClick}
-      whileHover={variant === "ghost" ? { y: -1 } : motionHover}
-      whileTap={motionTap}
+      disabled={disabled}
+      whileHover={
+        disabled ? undefined : variant === "ghost" ? { y: -1 } : motionHover
+      }
+      whileTap={disabled ? undefined : motionTap}
       transition={{ type: "spring", stiffness: 420, damping: 28 }}
     >
       {children}

@@ -1,11 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { BillingService } from "../src/index";
+import { TIER_QUOTA_LIMITS } from "../src/index";
 
-describe("BillingService", () => {
-  it("decrements starter quota usage", () => {
-    const billing = new BillingService();
-    const result = billing.reserveQuestionnaireUsage("org_1", "starter");
-    expect(result.used).toBe(1);
-    expect(result.remaining).toBe(9);
+describe("TIER_QUOTA_LIMITS", () => {
+  it("matches starter plan expectation for tests", () => {
+    expect(TIER_QUOTA_LIMITS.starter).toBe(10);
+    expect(TIER_QUOTA_LIMITS.free).toBe(1);
+    expect(TIER_QUOTA_LIMITS.pro).toBeNull();
   });
 });

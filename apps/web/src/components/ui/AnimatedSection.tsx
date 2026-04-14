@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 type AnimatedSectionDirection = "up" | "left" | "right" | "none";
@@ -26,15 +26,7 @@ export function AnimatedSection({
 }: AnimatedSectionProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const scrollInView = useInView(ref, { once: true, margin: "-80px" });
-  const [priorityReady, setPriorityReady] = useState(false);
-
-  useEffect(() => {
-    if (priority) {
-      setPriorityReady(true);
-    }
-  }, [priority]);
-
-  const visible = priority ? priorityReady : scrollInView;
+  const visible = priority || scrollInView;
 
   const initial = {
     opacity: 0,

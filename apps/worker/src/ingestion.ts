@@ -1,7 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import { RAGService } from "@trustrespond/ai";
 import { parsePdfToChunks } from "@trustrespond/parsers";
-import { STORAGE_BUCKETS } from "@trustrespond/db";
+import {
+  chunkArray,
+  DOCUMENT_CHUNKS_INSERT_BATCH_SIZE,
+  EMBEDDING_TEXT_BATCH_SIZE,
+  STORAGE_BUCKETS
+} from "@trustrespond/db";
 
 interface IngestionArgs {
   documentId: string;
@@ -37,19 +42,29 @@ export async function processKnowledgeDocumentIngestion(args: IngestionArgs) {
     throw new Error("No text content extracted from PDF.");
   }
 
-  const embeddings = await rag.generateEmbeddings(chunks.map((chunk) => chunk.content));
+  const allEmbeddings: number[][] = [];
+  for (let i = 0; i < chunks.length; i += EMBEDDING_TEXT_BATCH_SIZE) {
+    const slice = chunks.slice(i, i + EMBEDDING_TEXT_BATCH_SIZE);
+    const batchEmb = await rag.generateEmbeddings(slice.map((chunk) => chunk.content));
+    allEmbeddings.push(...batchEmb);
+  }
   const rows = chunks.map((chunk, index) => ({
     org_id: args.orgId,
     document_id: args.documentId,
     content: chunk.content,
     metadata: chunk.metadata,
-    embedding: toPgVector(embeddings[index] ?? [])
+    embedding: toPgVector(allEmbeddings[index] ?? [])
   }));
 
-  const { error: insertError } = await supabase.from("document_chunks").insert(rows);
-  if (insertError) {
-    await supabase.from("documents").update({ status: "error" }).eq("id", args.documentId).eq("org_id", args.orgId);
-    throw new Error(`Failed to insert document chunks: ${insertError.message}`);
+  const batches = chunkArray(rows, DOCUMENT_CHUNKS_INSERT_BATCH_SIZE);
+  for (let b = 0; b < batches.length; b++) {
+    const { error: insertError } = await supabase.from("document_chunks").insert(batches[b]);
+    if (insertError) {
+      await supabase.from("documents").update({ status: "error" }).eq("id", args.documentId).eq("org_id", args.orgId);
+      throw new Error(
+        `Failed to insert document chunks (batch ${b + 1}/${batches.length}, ${batches[b].length} rows): ${insertError.message}`
+      );
+    }
   }
 
   await supabase
