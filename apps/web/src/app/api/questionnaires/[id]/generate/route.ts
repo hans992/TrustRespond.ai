@@ -1,14 +1,50 @@
+import { APICallError } from "ai";
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { QuestionnaireFlowService } from "@trustrespond/ai";
 import { getCurrentOrgContext } from "@/lib/org";
+import { reserveQuestionnaireQuota } from "@/lib/billing-quota";
+import { publicErrorMessage } from "@/lib/safe-error";
+import { supabaseEnv } from "@/lib/supabase/env";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { injectAnswersIntoXlsxBuffer, parseQuestionnaireXlsxBuffer } from "@trustrespond/parsers";
 import { STORAGE_BUCKETS } from "@trustrespond/db";
 
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id: questionnaireId } = await context.params;
-    const { supabase, orgId } = await getCurrentOrgContext();
-    const { data: questionnaire, error: qError } = await supabase
+    const { orgId } = await getCurrentOrgContext();
+
+    const userSupabase = await createSupabaseServerClient();
+    try {
+      await reserveQuestionnaireQuota(userSupabase, orgId);
+    } catch (quotaErr) {
+      const msg = quotaErr instanceof Error ? quotaErr.message : String(quotaErr);
+      if (
+        msg.toLowerCase().includes("quota") ||
+        msg.includes("Monthly questionnaire quota exceeded")
+      ) {
+        return NextResponse.json(
+          { ok: false, error: publicErrorMessage(quotaErr, "Monthly questionnaire quota exceeded") },
+          { status: 429 }
+        );
+      }
+      return NextResponse.json({ ok: false, error: publicErrorMessage(quotaErr) }, { status: 400 });
+    }
+
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!serviceKey) {
+      return NextResponse.json(
+        { ok: false, error: "Server misconfigured: SUPABASE_SERVICE_ROLE_KEY is required for AI generation" },
+        { status: 500 }
+      );
+    }
+
+    const db = createClient(supabaseEnv.NEXT_PUBLIC_SUPABASE_URL, serviceKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    });
+
+    const { data: questionnaire, error: qError } = await db
       .from("questionnaires")
       .select("id,filename,file_type,s3_key_original")
       .eq("id", questionnaireId)
@@ -16,24 +52,34 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       .single();
 
     if (qError || !questionnaire) {
-      return NextResponse.json({ ok: false, error: qError?.message ?? "Questionnaire not found" }, { status: 404 });
+      return NextResponse.json(
+        { ok: false, error: publicErrorMessage(qError ?? new Error("missing"), "Questionnaire not found") },
+        { status: 404 }
+      );
     }
     if (questionnaire.file_type !== "xlsx") {
       return NextResponse.json({ ok: false, error: "Phase 3 export currently supports .xlsx only." }, { status: 400 });
     }
 
-    const { data: originalFile, error: downloadError } = await supabase.storage
+    const { data: originalFile, error: downloadError } = await db.storage
       .from(STORAGE_BUCKETS.questionnaires)
       .download(questionnaire.s3_key_original);
     if (downloadError || !originalFile) {
-      return NextResponse.json({ ok: false, error: downloadError?.message ?? "Unable to download questionnaire file" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: publicErrorMessage(downloadError ?? new Error("missing"), "Unable to download questionnaire file") },
+        { status: 400 }
+      );
     }
 
     const originalBuffer = Buffer.from(await originalFile.arrayBuffer());
     const parsedSheet = await parseQuestionnaireXlsxBuffer(originalBuffer);
     const flow = new QuestionnaireFlowService();
 
-    const drafts = await Promise.all(parsedSheet.questions.map((q) => flow.generateDraftAnswer(supabase, { id: q.answerCell, questionText: q.questionText })));
+    const drafts = await Promise.all(
+      parsedSheet.questions.map((q) =>
+        flow.generateDraftAnswer(db, { id: q.answerCell, questionText: q.questionText }, orgId)
+      )
+    );
 
     const injections = parsedSheet.questions.map((question, index) => ({
       sheetName: question.sheetName,
@@ -42,19 +88,19 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     }));
     const completedBuffer = await injectAnswersIntoXlsxBuffer(originalBuffer, injections);
     const completedKey = `${orgId}/completed/${questionnaireId}-${Date.now()}.xlsx`;
-    const { error: uploadError } = await supabase.storage
+    const { error: uploadError } = await db.storage
       .from(STORAGE_BUCKETS.questionnaires)
       .upload(completedKey, completedBuffer, {
         contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         upsert: true
       });
     if (uploadError) {
-      return NextResponse.json({ ok: false, error: uploadError.message }, { status: 400 });
+      return NextResponse.json({ ok: false, error: publicErrorMessage(uploadError) }, { status: 400 });
     }
 
     const autoAnswered = drafts.filter((d) => d.confidence === "high").length;
     const flaggedForReview = drafts.filter((d) => d.confidence !== "high").length;
-    await supabase
+    await db
       .from("questionnaires")
       .update({
         status: "exported",
@@ -67,8 +113,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       .eq("id", questionnaireId)
       .eq("org_id", orgId);
 
-    await supabase.from("questionnaire_questions").delete().eq("questionnaire_id", questionnaireId).eq("org_id", orgId);
-    await supabase.from("questionnaire_questions").insert(
+    await db.from("questionnaire_questions").delete().eq("questionnaire_id", questionnaireId).eq("org_id", orgId);
+    await db.from("questionnaire_questions").insert(
       parsedSheet.questions.map((question, index) => ({
         org_id: orgId,
         questionnaire_id: questionnaireId,
@@ -88,6 +134,22 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       stats: { total: drafts.length, autoAnswered, flaggedForReview }
     });
   } catch (error) {
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Generation failed" }, { status: 500 });
+    const message = formatGenerateError(error);
+    return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
+}
+
+function formatGenerateError(error: unknown): string {
+  if (process.env.NODE_ENV !== "development") {
+    return publicErrorMessage(error, "Generation failed");
+  }
+  if (APICallError.isInstance(error)) {
+    const bits = [error.message];
+    if (error.statusCode !== undefined) bits.push(`HTTP ${error.statusCode}`);
+    if (error.responseBody) bits.push(error.responseBody.slice(0, 2_000));
+    if (error.url) bits.push(error.url);
+    return bits.join(" | ");
+  }
+  if (error instanceof Error) return error.message;
+  return "Generation failed";
 }

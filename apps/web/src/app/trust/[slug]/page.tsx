@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import { trustCenterPages } from "@/lib/mock-store";
 
-export default function TrustCenterPublicPage({ params }: { params: { slug: string } }) {
-  const page = trustCenterPages.find((p) => p.slug === params.slug && p.isPublished);
+export default async function TrustCenterPublicPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const page = trustCenterPages.find((p) => p.slug === slug && p.isPublished);
   if (!page) {
     notFound();
   }

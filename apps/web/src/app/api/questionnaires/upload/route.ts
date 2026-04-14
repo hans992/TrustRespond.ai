@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentOrgContext } from "@/lib/org";
+import { MAX_UPLOAD_BYTES } from "@/lib/upload-limits";
+import { publicErrorMessage } from "@/lib/safe-error";
 
 function resolveQuestionnaireType(filename: string): "xlsx" | "csv" | "docx" | null {
   const lower = filename.toLowerCase();
@@ -24,6 +26,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Supported formats: .xlsx, .csv, .docx" }, { status: 400 });
     }
 
+    if (file.size > MAX_UPLOAD_BYTES) {
+      return NextResponse.json(
+        { ok: false, error: `File too large (max ${Math.floor(MAX_UPLOAD_BYTES / (1024 * 1024))} MB)` },
+        { status: 413 }
+      );
+    }
+
     const { supabase, userId, orgId } = await getCurrentOrgContext();
     const objectPath = `${orgId}/${crypto.randomUUID()}-${file.name}`;
 
@@ -32,7 +41,7 @@ export async function POST(request: Request) {
       contentType: file.type || "application/octet-stream"
     });
     if (uploadError) {
-      return NextResponse.json({ ok: false, error: uploadError.message }, { status: 400 });
+      return NextResponse.json({ ok: false, error: publicErrorMessage(uploadError) }, { status: 400 });
     }
 
     const { data: questionnaire, error: dbError } = await supabase
@@ -50,11 +59,11 @@ export async function POST(request: Request) {
       .single();
 
     if (dbError) {
-      return NextResponse.json({ ok: false, error: dbError.message }, { status: 400 });
+      return NextResponse.json({ ok: false, error: publicErrorMessage(dbError) }, { status: 400 });
     }
 
     return NextResponse.json({ ok: true, questionnaire });
   } catch (error) {
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Upload failed" }, { status: 500 });
+    return NextResponse.json({ ok: false, error: publicErrorMessage(error, "Upload failed") }, { status: 500 });
   }
 }

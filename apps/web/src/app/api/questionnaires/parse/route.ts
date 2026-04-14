@@ -1,7 +1,11 @@
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getCurrentOrgContext } from "@/lib/org";
+import { supabaseEnv } from "@/lib/supabase/env";
 import { parseQuestionnaireXlsxBuffer } from "@trustrespond/parsers";
 import { STORAGE_BUCKETS } from "@trustrespond/db";
+import { MAX_UPLOAD_BYTES } from "@/lib/upload-limits";
+import { publicErrorMessage } from "@/lib/safe-error";
 
 export async function POST(request: Request) {
   try {
@@ -16,20 +20,39 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: "Dry-run parse currently supports .xlsx only." }, { status: 400 });
     }
 
+    if (file.size > MAX_UPLOAD_BYTES) {
+      return NextResponse.json(
+        { ok: false, error: `File too large (max ${Math.floor(MAX_UPLOAD_BYTES / (1024 * 1024))} MB)` },
+        { status: 413 }
+      );
+    }
+
     const fileBuffer = Buffer.from(await file.arrayBuffer());
     const parsed = await parseQuestionnaireXlsxBuffer(fileBuffer);
-    const { supabase, userId, orgId } = await getCurrentOrgContext();
+    const { userId, orgId } = await getCurrentOrgContext();
+
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!serviceKey) {
+      return NextResponse.json(
+        { ok: false, error: "Server misconfigured: SUPABASE_SERVICE_ROLE_KEY is required for questionnaire ingest" },
+        { status: 500 }
+      );
+    }
+
+    const db = createClient(supabaseEnv.NEXT_PUBLIC_SUPABASE_URL, serviceKey, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    });
 
     const objectPath = `${orgId}/${crypto.randomUUID()}-${file.name}`;
-    const { error: uploadError } = await supabase.storage.from(STORAGE_BUCKETS.questionnaires).upload(objectPath, fileBuffer, {
+    const { error: uploadError } = await db.storage.from(STORAGE_BUCKETS.questionnaires).upload(objectPath, fileBuffer, {
       upsert: false,
       contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     });
     if (uploadError) {
-      return NextResponse.json({ ok: false, error: uploadError.message }, { status: 400 });
+      return NextResponse.json({ ok: false, error: publicErrorMessage(uploadError) }, { status: 400 });
     }
 
-    const { data: questionnaire, error: dbError } = await supabase
+    const { data: questionnaire, error: dbError } = await db
       .from("questionnaires")
       .insert({
         org_id: orgId,
@@ -44,7 +67,10 @@ export async function POST(request: Request) {
       .single();
 
     if (dbError || !questionnaire) {
-      return NextResponse.json({ ok: false, error: dbError?.message ?? "Unable to create questionnaire record" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: publicErrorMessage(dbError ?? new Error("missing"), "Unable to create questionnaire record") },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json({
@@ -67,6 +93,6 @@ export async function POST(request: Request) {
       }
     });
   } catch (error) {
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Parse failed" }, { status: 500 });
+    return NextResponse.json({ ok: false, error: publicErrorMessage(error, "Parse failed") }, { status: 500 });
   }
 }
