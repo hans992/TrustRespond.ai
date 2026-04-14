@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.63",
-    "@ai-sdk/openai": "^3.0.52",
     "@supabase/supabase-js": "^2.103.0",
     "@trustrespond/db": "0.1.0"
     ,

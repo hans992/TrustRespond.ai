@@ -15,6 +15,13 @@ Execution-ready monorepo for TrustRespond:
 2. Run `npm install`.
 3. Run `npm run dev`.
 
+## AI Provider
+
+- The RAG pipeline is configured for Google Gemini by default.
+- Recommended defaults are:
+  - Generation: `gemini-2.5-pro`
+  - Embeddings: `text-embedding-004`
+
 ## Included Blueprint Features
 
 - Multi-tenant schema foundation with RLS and append-only audit logs

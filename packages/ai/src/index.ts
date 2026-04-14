@@ -1,5 +1,4 @@
 import { embed, embedMany, generateObject } from "ai";
-import { openai } from "@ai-sdk/openai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -20,23 +19,15 @@ export interface DraftAnswer {
 }
 
 export interface RAGConfig {
-  provider?: "openai" | "google";
   embeddingModel?: string;
   generationModel?: string;
   topK?: number;
 }
 
 function buildProviderModel(config: RAGConfig) {
-  const provider = config.provider ?? (process.env.AI_PROVIDER === "google" ? "google" : "openai");
-  if (provider === "google") {
-    return {
-      embeddingModel: google.textEmbeddingModel(config.embeddingModel ?? "text-embedding-004"),
-      generationModel: google(config.generationModel ?? "gemini-2.0-flash")
-    };
-  }
   return {
-    embeddingModel: openai.textEmbeddingModel(config.embeddingModel ?? "text-embedding-3-small"),
-    generationModel: openai(config.generationModel ?? "gpt-4.1-mini")
+    embeddingModel: google.textEmbeddingModel(config.embeddingModel ?? "text-embedding-004"),
+    generationModel: google(config.generationModel ?? "gemini-2.5-pro")
   };
 }
 
@@ -65,12 +56,17 @@ function toPgVector(values: number[]) {
   return `[${values.join(",")}]`;
 }
 
+function normalizeVectorDimensions(values: number[], dimensions = 1536) {
+  if (values.length === dimensions) return values;
+  if (values.length > dimensions) return values.slice(0, dimensions);
+  return [...values, ...new Array(dimensions - values.length).fill(0)];
+}
+
 export class RAGService {
   private readonly config: Required<RAGConfig>;
 
   constructor(config: RAGConfig = {}) {
     this.config = {
-      provider: config.provider ?? (process.env.AI_PROVIDER === "google" ? "google" : "openai"),
       embeddingModel: config.embeddingModel ?? "",
       generationModel: config.generationModel ?? "",
       topK: config.topK ?? 5
@@ -80,13 +76,13 @@ export class RAGService {
   async generateEmbeddings(input: string[]) {
     const { embeddingModel } = buildProviderModel(this.config);
     const result = await withRetries(() => embedMany({ model: embeddingModel, values: input }));
-    return result.embeddings;
+    return result.embeddings.map((embedding) => normalizeVectorDimensions(embedding));
   }
 
   async embedQuestion(question: string) {
     const { embeddingModel } = buildProviderModel(this.config);
     const result = await withRetries(() => embed({ model: embeddingModel, value: question }));
-    return result.embedding;
+    return normalizeVectorDimensions(result.embedding);
   }
 
   async retrieveChunks(supabase: SupabaseClient, question: string, topK = this.config.topK) {
