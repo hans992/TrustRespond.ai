@@ -169,6 +169,29 @@ export function Footer() {
 
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 border-t border-white/10 px-6 py-8 md:flex-row">
         <p className="text-xs text-slate-600">© 2026 TrustRespond.ai. All rights reserved.</p>
+        <a
+          href="https://www.complianceradar.dev"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-[#0a0a0a] px-3.5 py-2 text-[13px] font-medium text-emerald-400 no-underline transition-colors hover:border-emerald-500/50 hover:text-emerald-300"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width={16}
+            height={16}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
+          Audited via ComplianceRadar.dev
+        </a>
         <p className="text-xs text-slate-600">
           Built by{" "}
           <a
