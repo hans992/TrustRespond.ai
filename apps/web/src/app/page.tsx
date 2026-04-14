@@ -1,31 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Database, FileSpreadsheet, ShieldCheck } from "lucide-react";
 import { Navbar } from "@/components/marketing/Navbar";
 import { Footer } from "@/components/marketing/Footer";
 import { StatsBar } from "@/components/marketing/StatsBar";
+import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { GlowButton } from "@/components/ui/GlowButton";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
-
-const steps = [
-  {
-    title: "Upload your brain",
-    description: "Securely upload your SOC2, ISO27001, and past questionnaires.",
-    icon: Database
-  },
-  {
-    title: "Upload the chaotic Excel",
-    description: "Drop your client’s blank 200-row .xlsx file. We read it without breaking formulas.",
-    icon: FileSpreadsheet
-  },
-  {
-    title: "Review & Export",
-    description: "AI generates answers with confidence scores. Review, click export, and ship the final file.",
-    icon: ShieldCheck
-  }
-];
 
 const metrics = [
   { label: "Time Saved per Questionnaire", value: "80%" },
@@ -154,33 +136,7 @@ export default function LandingPage() {
 
       <StatsBar />
 
-      <section id="features" className="mx-auto max-w-6xl px-6 py-20 sm:px-8">
-        <h2 className="text-center text-3xl font-semibold tracking-tight sm:text-4xl">How It Works</h2>
-        <p className="mx-auto mt-3 max-w-2xl text-center text-slate-400">
-          A premium, deterministic workflow that keeps your client&apos;s original spreadsheet intact.
-        </p>
-        <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-3">
-          {steps.map((step, index) => {
-            const Icon = step.icon;
-            return (
-              <motion.article
-                key={step.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.4, delay: index * 0.06 }}
-                className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-[0_0_32px_-18px_rgba(16,185,129,0.35)]"
-              >
-                <div className="inline-flex rounded-lg border border-emerald-300/20 bg-emerald-500/10 p-2 text-emerald-300">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <h3 className="mt-4 text-lg font-medium">{step.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-400">{step.description}</p>
-              </motion.article>
-            );
-          })}
-        </div>
-      </section>
+      <HowItWorks />
 
       <section id="security" className="border-t border-white/10 bg-slate-900/40">
         <div className="mx-auto max-w-6xl px-6 py-20 sm:px-8">
