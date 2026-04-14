@@ -1,0 +1,18 @@
+# Editor folders
+.vs/
+.vscode/
+
+# Dependencies
+node_modules/
+npm-debug.log
+
+# Next.js build output
+.next/
+out/
+
+# Env files (OVO JE KRITIČNO DA TI KLJUČEVI NE ZAVRŠE NA INTERNETU)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

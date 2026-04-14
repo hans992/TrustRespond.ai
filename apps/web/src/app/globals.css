@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root {
+  --deep-navy: #0a1628;
+  --emerald: #10b981;
+  --electric-blue: #3b82f6;
+  --text-secondary: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: #e2e8f0;
+  background: #020617;
+  font-family: Inter, Arial, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.bg-grid-white\/\[0\.02\] {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
