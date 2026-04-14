@@ -41,17 +41,23 @@ const faqs = [
 export function FAQSection() {
   return (
     <AnimatedSection>
-      <section id="faq" className="relative px-6 py-24">
+      <section
+        id="security"
+        className="scroll-mt-24 px-6 py-28 md:py-32"
+        aria-label="Security and frequently asked questions"
+      >
         <div className="mx-auto max-w-3xl">
           <SectionBadge color="neutral">FAQ</SectionBadge>
-          <h2 className="mt-4 text-4xl font-bold text-gradient-hero">Questions we get from security-conscious teams.</h2>
+          <h2 className="mt-4 text-4xl font-bold tracking-tight text-gradient-hero">
+            Questions we get from security-conscious teams.
+          </h2>
 
           <Accordion.Root type="single" collapsible className="mt-12 space-y-3">
             {faqs.map((faq, index) => (
               <Accordion.Item
                 key={faq.question}
                 value={`item-${index + 1}`}
-                className="glass-card overflow-hidden rounded-2xl border-0"
+                className="glass-card overflow-hidden rounded-2xl border border-white/10 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald/20 hover:shadow-card-hover"
               >
                 <Accordion.Header>
                   <Accordion.Trigger className="group flex w-full items-center justify-between px-6 py-5 text-left text-base font-medium text-neutral-50 transition-colors hover:text-accent-light">
@@ -59,7 +65,7 @@ export function FAQSection() {
                     <ChevronDown className="h-5 w-5 shrink-0 transition-transform group-data-[state=open]:rotate-180" />
                   </Accordion.Trigger>
                 </Accordion.Header>
-                <Accordion.Content className="px-6 pb-5 text-sm leading-relaxed text-neutral-400">
+                <Accordion.Content className="px-6 pb-5 text-sm leading-relaxed text-slate-400">
                   {faq.answer}
                 </Accordion.Content>
               </Accordion.Item>

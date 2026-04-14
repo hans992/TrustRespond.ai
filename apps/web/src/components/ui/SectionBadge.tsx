@@ -14,8 +14,8 @@ function cn(...inputs: Array<string | false | null | undefined>) {
 }
 
 const badgeColorClasses: Record<SectionBadgeColor, string> = {
-  blue: "bg-accent/10 text-accent-light border border-accent/20",
-  emerald: "bg-emerald/10 text-emerald-light border border-emerald/20",
+  blue: "bg-accent/10 text-accent-light border border-white/10 ring-1 ring-accent/15",
+  emerald: "bg-emerald/10 text-emerald-light border border-white/10 ring-1 ring-emerald/20",
   neutral: "bg-white/5 text-neutral-400 border border-white/10",
 };
 
@@ -29,7 +29,7 @@ export function SectionBadge({ children, color = "blue" }: SectionBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase",
+        "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-[0.08em] uppercase",
         badgeColorClasses[color],
       )}
     >

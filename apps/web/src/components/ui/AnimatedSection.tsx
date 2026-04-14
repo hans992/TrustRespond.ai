@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 
 type AnimatedSectionDirection = "up" | "left" | "right" | "none";
@@ -11,21 +11,35 @@ type AnimatedSectionProps = {
   className?: string;
   delay?: number;
   direction?: AnimatedSectionDirection;
+  /** Above-the-fold: animate on mount without waiting for scroll intersection */
+  priority?: boolean;
 };
+
+const travel = 20;
 
 export function AnimatedSection({
   children,
   className,
   delay = 0,
   direction = "up",
+  priority = false,
 }: AnimatedSectionProps) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const scrollInView = useInView(ref, { once: true, margin: "-80px" });
+  const [priorityReady, setPriorityReady] = useState(false);
+
+  useEffect(() => {
+    if (priority) {
+      setPriorityReady(true);
+    }
+  }, [priority]);
+
+  const visible = priority ? priorityReady : scrollInView;
 
   const initial = {
     opacity: 0,
-    y: direction === "up" ? 32 : 0,
-    x: direction === "left" ? -32 : direction === "right" ? 32 : 0,
+    y: direction === "up" ? travel : 0,
+    x: direction === "left" ? -travel : direction === "right" ? travel : 0,
   };
 
   return (
@@ -33,8 +47,8 @@ export function AnimatedSection({
       ref={ref}
       className={className}
       initial={initial}
-      animate={isInView ? { opacity: 1, y: 0, x: 0 } : initial}
-      transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
+      animate={visible ? { opacity: 1, y: 0, x: 0 } : initial}
+      transition={{ duration: 0.5, delay, ease: [0.25, 0.1, 0.25, 1] }}
     >
       {children}
     </motion.div>

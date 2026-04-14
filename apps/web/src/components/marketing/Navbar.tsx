@@ -38,8 +38,10 @@ export function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled ? "glass border-b border-surface-border/50" : "bg-transparent"
+      className={`sticky top-0 z-50 border-b transition-all duration-300 ${
+        isScrolled
+          ? "glass border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.32)]"
+          : "border-white/[0.06] bg-slate-950/65 backdrop-blur-xl"
       }`}
     >
       <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6">
@@ -56,7 +58,7 @@ export function Navbar() {
               key={item.sectionId}
               type="button"
               onClick={() => scrollToSection(item.sectionId)}
-              className="cursor-pointer text-sm text-neutral-400 transition-colors duration-200 hover:text-neutral-50"
+              className="cursor-pointer text-sm text-neutral-400 transition-all duration-200 ease-out hover:text-slate-100 hover:-translate-y-px"
             >
               {item.label}
             </button>
@@ -89,7 +91,7 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.2 }}
-            className="w-full border-t border-surface-border/50 glass md:hidden"
+            className="w-full border-t border-white/10 glass md:hidden"
           >
             <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-4">
               {navItems.map((item) => (
@@ -97,7 +99,7 @@ export function Navbar() {
                   key={item.sectionId}
                   type="button"
                   onClick={() => scrollToSection(item.sectionId)}
-                  className="cursor-pointer rounded-lg px-2 py-2 text-left text-sm text-neutral-400 transition-colors duration-200 hover:text-neutral-50"
+                  className="cursor-pointer rounded-lg px-2 py-2 text-left text-sm text-neutral-400 transition-all duration-200 ease-out hover:text-slate-100 hover:-translate-y-px"
                 >
                   {item.label}
                 </button>

@@ -27,13 +27,13 @@ const trustCenterFeatures = [
 
 export function TrustCenterShowcase() {
   return (
-    <section id="features" className="relative bg-surface-card/20 px-6 py-24">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-16 lg:grid-cols-2">
+    <section id="features" className="relative bg-surface-card/20 px-6 py-28 md:py-32">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-20">
         <AnimatedSection delay={0} direction="up">
           <div>
             <SectionBadge color="blue">Trust Center</SectionBadge>
             <h2 className="mt-4 text-4xl font-bold text-gradient-hero">Your public compliance page. Built automatically.</h2>
-            <p className="mt-4 leading-relaxed text-neutral-400">
+            <p className="mt-4 leading-relaxed text-slate-400">
               Every TrustRespond account includes a hosted Trust Center - a public-facing compliance page where prospects can
               verify your security posture, request documents, and sign NDAs before accessing sensitive policies.
             </p>
@@ -60,7 +60,7 @@ export function TrustCenterShowcase() {
           <motion.div
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-            className="glass-card overflow-hidden rounded-3xl"
+            className="glass-card overflow-hidden rounded-3xl border border-white/10 transition-[box-shadow,border-color] duration-300 hover:border-emerald/25 hover:shadow-card-hover"
           >
             <div className="flex items-center justify-between bg-surface-elevated px-6 py-4">
               <span className="text-xs text-neutral-400">🔒 security.acmesaas.com</span>

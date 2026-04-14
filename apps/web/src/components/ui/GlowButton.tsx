@@ -22,10 +22,12 @@ function cn(...inputs: Array<string | false | null | undefined>) {
 }
 
 const variantClasses: Record<GlowButtonVariant, string> = {
-  primary: "bg-accent text-white hover:bg-accent-light shadow-glow-blue",
+  primary:
+    "bg-emerald text-white border border-emerald-light/25 shadow-glow-emerald shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] hover:bg-emerald-light hover:shadow-[0_8px_32px_rgba(48,209,88,0.35),0_0_0_1px_rgba(76,217,100,0.15),inset_0_1px_0_rgba(255,255,255,0.2)] hover:-translate-y-0.5 active:translate-y-0",
   secondary:
-    "glass border border-surface-border text-neutral-50 hover:border-accent/50 hover:text-accent-light",
-  ghost: "bg-transparent text-neutral-400 hover:text-neutral-50",
+    "glass border border-white/10 text-neutral-50 hover:border-emerald/35 hover:text-emerald-light hover:bg-emerald/5 hover:-translate-y-0.5 active:translate-y-0",
+  ghost:
+    "bg-transparent text-neutral-400 border border-transparent hover:text-neutral-50 hover:bg-white/[0.04] hover:-translate-y-px",
 };
 
 const sizeClasses: Record<GlowButtonSize, string> = {
@@ -34,7 +36,11 @@ const sizeClasses: Record<GlowButtonSize, string> = {
   lg: "px-8 py-4 text-lg rounded-2xl font-semibold",
 };
 
-const baseClasses = "inline-flex items-center gap-2 cursor-pointer font-medium transition-all duration-200";
+const baseClasses =
+  "inline-flex items-center justify-center gap-2 cursor-pointer font-medium transition-all duration-200 ease-out";
+
+const motionHover = { y: -2 };
+const motionTap = { y: 0 };
 
 export function GlowButton({
   variant = "primary",
@@ -52,9 +58,9 @@ export function GlowButton({
         href={href}
         className={classes}
         onClick={onClick}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        whileHover={variant === "ghost" ? { y: -1 } : motionHover}
+        whileTap={motionTap}
+        transition={{ type: "spring", stiffness: 420, damping: 28 }}
       >
         {children}
       </motion.a>
@@ -66,9 +72,9 @@ export function GlowButton({
       type="button"
       className={classes}
       onClick={onClick}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      whileHover={variant === "ghost" ? { y: -1 } : motionHover}
+      whileTap={motionTap}
+      transition={{ type: "spring", stiffness: 420, damping: 28 }}
     >
       {children}
     </motion.button>

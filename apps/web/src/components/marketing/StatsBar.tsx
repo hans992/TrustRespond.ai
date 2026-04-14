@@ -42,29 +42,29 @@ export function StatsBar() {
   const count = useCountUp(80, 1.5, isInView);
 
   return (
-    <section className="relative py-12 border-y border-surface-border/50">
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/3 to-transparent" />
-      <div ref={countRef} className="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center relative z-10">
+    <section className="relative border-y border-white/10 py-14 md:py-16">
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/[0.04] to-transparent" />
+      <div ref={countRef} className="relative z-10 mx-auto grid max-w-5xl grid-cols-1 gap-10 px-6 text-center md:grid-cols-3 md:gap-8">
         <AnimatedSection direction="none">
-          <div className="md:border-r md:border-surface-border/50 md:pr-8">
-            <p className="text-4xl md:text-5xl font-bold text-gradient-blue">{count}%</p>
-            <p className="text-sm text-neutral-400 mt-2 max-w-[160px] mx-auto leading-relaxed">
+          <div className="md:border-r md:border-white/10 md:pr-8">
+            <p className="text-4xl font-bold text-gradient-blue md:text-5xl">{count}%</p>
+            <p className="mx-auto mt-2 max-w-[160px] text-sm leading-relaxed text-slate-400">
               Average time saved per questionnaire
             </p>
           </div>
         </AnimatedSection>
 
         <AnimatedSection delay={0.1} direction="none">
-          <div className="md:border-r md:border-surface-border/50 md:pr-8">
-            <p className="text-4xl md:text-5xl font-bold text-gradient-blue">2 hours</p>
-            <p className="text-sm text-neutral-400 mt-2 max-w-[160px] mx-auto leading-relaxed">From 2 weeks to completion</p>
+          <div className="md:border-r md:border-white/10 md:pr-8">
+            <p className="text-4xl font-bold text-gradient-emerald md:text-5xl">2 hours</p>
+            <p className="mx-auto mt-2 max-w-[160px] text-sm leading-relaxed text-slate-400">From 2 weeks to completion</p>
           </div>
         </AnimatedSection>
 
         <AnimatedSection delay={0.2} direction="none">
           <div>
-            <p className="text-4xl md:text-5xl font-bold text-gradient-blue">Zero</p>
-            <p className="text-sm text-neutral-400 mt-2 max-w-[160px] mx-auto leading-relaxed">
+            <p className="text-4xl font-bold text-gradient-blue md:text-5xl">Zero</p>
+            <p className="mx-auto mt-2 max-w-[160px] text-sm leading-relaxed text-slate-400">
               Formatting errors in exported files
             </p>
           </div>
