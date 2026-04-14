@@ -24,10 +24,19 @@ export interface RAGConfig {
   topK?: number;
 }
 
+function defaultGenerationModelId(config: RAGConfig) {
+  const fromConfig = config.generationModel?.trim();
+  if (fromConfig) return fromConfig;
+  const fromEnv = typeof process !== "undefined" ? process.env.GOOGLE_GENERATION_MODEL?.trim() : undefined;
+  if (fromEnv) return fromEnv;
+  return "gemini-2.5-flash";
+}
+
 function buildProviderModel(config: RAGConfig) {
+  const id = config.embeddingModel?.trim() || "gemini-embedding-001";
   return {
-    embeddingModel: google.textEmbeddingModel(config.embeddingModel ?? "text-embedding-004"),
-    generationModel: google(config.generationModel ?? "gemini-2.5-pro")
+    embeddingModel: google.embedding(id),
+    generationModel: google(defaultGenerationModelId(config))
   };
 }
 
@@ -67,7 +76,7 @@ export class RAGService {
 
   constructor(config: RAGConfig = {}) {
     this.config = {
-      embeddingModel: config.embeddingModel ?? "",
+      embeddingModel: config.embeddingModel ?? "gemini-embedding-001",
       generationModel: config.generationModel ?? "",
       topK: config.topK ?? 5
     };
@@ -85,21 +94,38 @@ export class RAGService {
     return normalizeVectorDimensions(result.embedding);
   }
 
-  async retrieveChunks(supabase: SupabaseClient, question: string, topK = this.config.topK) {
+  async retrieveChunks(
+    supabase: SupabaseClient,
+    question: string,
+    topK = this.config.topK,
+    orgIdForServiceSearch?: string
+  ) {
     const vector = await this.embedQuestion(question);
-    const { data, error } = await supabase.rpc("match_chunks", {
-      query_embedding: toPgVector(vector),
-      match_count: topK,
-      min_similarity: 0.2
-    });
+    const { data, error } = orgIdForServiceSearch
+      ? await supabase.rpc("match_chunks_for_org", {
+          query_embedding: toPgVector(vector),
+          match_count: topK,
+          min_similarity: 0.2,
+          p_org_id: orgIdForServiceSearch
+        })
+      : await supabase.rpc("match_chunks", {
+          query_embedding: toPgVector(vector),
+          match_count: topK,
+          min_similarity: 0.2
+        });
     if (error) {
       throw new Error(`Chunk retrieval failed: ${error.message}`);
     }
     return (data ?? []) as RetrievedChunk[];
   }
 
-  async answerQuestion(supabase: SupabaseClient, questionId: string, questionText: string): Promise<DraftAnswer> {
-    const chunks = await this.retrieveChunks(supabase, questionText);
+  async answerQuestion(
+    supabase: SupabaseClient,
+    questionId: string,
+    questionText: string,
+    orgIdForVectorSearch?: string
+  ): Promise<DraftAnswer> {
+    const chunks = await this.retrieveChunks(supabase, questionText, this.config.topK, orgIdForVectorSearch);
     const context = chunks.map((chunk, index) => `[#${index + 1}] ${chunk.content}`).join("\n\n");
 
     const { generationModel } = buildProviderModel(this.config);
@@ -137,7 +163,11 @@ export class QuestionnaireFlowService {
     this.rag = new RAGService(config);
   }
 
-  async generateDraftAnswer(supabase: SupabaseClient, question: { id: string; questionText: string }) {
-    return this.rag.answerQuestion(supabase, question.id, question.questionText);
+  async generateDraftAnswer(
+    supabase: SupabaseClient,
+    question: { id: string; questionText: string },
+    orgIdForVectorSearch?: string
+  ) {
+    return this.rag.answerQuestion(supabase, question.id, question.questionText, orgIdForVectorSearch);
   }
 }
