@@ -2,7 +2,7 @@ import { embed, embedMany, generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Confidence } from "@trustrespond/db";
+import { toPgVector, type Confidence } from "@trustrespond/db";
 
 export interface RetrievedChunk {
   id: string;
@@ -59,10 +59,6 @@ async function withRetries<T>(fn: () => Promise<T>, retries = 3) {
       attempt += 1;
     }
   }
-}
-
-function toPgVector(values: number[]) {
-  return `[${values.join(",")}]`;
 }
 
 function normalizeVectorDimensions(values: number[], dimensions = 1536) {

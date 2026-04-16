@@ -3,6 +3,13 @@ import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import { trustCenterPages } from "@/lib/mock-store";
 
+export const dynamic = "force-static";
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return trustCenterPages.filter((page) => page.isPublished).map((page) => ({ slug: page.slug }));
+}
+
 export default async function TrustCenterPublicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const page = trustCenterPages.find((p) => p.slug === slug && p.isPublished);

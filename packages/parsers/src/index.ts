@@ -41,6 +41,11 @@ export interface InjectedAnswer {
 
 const DEFAULT_CHUNK_SIZE = 1200;
 const DEFAULT_CHUNK_OVERLAP = 200;
+type XlsxLoadInput = Parameters<ExcelJS.Workbook["xlsx"]["load"]>[0];
+
+function toXlsxLoadInput(input: Buffer | Uint8Array): XlsxLoadInput {
+  return Buffer.from(input) as unknown as XlsxLoadInput;
+}
 
 export async function extractTextFromPdfBuffer(input: Buffer | Uint8Array) {
   const buffer = Buffer.isBuffer(input) ? input : Buffer.from(input);
@@ -166,8 +171,7 @@ function detectColumns(worksheet: ExcelJS.Worksheet, headerRowNumber: number) {
 
 export async function parseQuestionnaireXlsxBuffer(input: Buffer | Uint8Array): Promise<ParsedQuestionnaireSheet> {
   const workbook = new ExcelJS.Workbook();
-  const bytes = input instanceof Uint8Array ? input : new Uint8Array(input);
-  await workbook.xlsx.load(bytes as any);
+  await workbook.xlsx.load(toXlsxLoadInput(input));
   const worksheet = workbook.worksheets.find((ws) => ws.state === "visible") ?? workbook.worksheets[0];
   if (!worksheet) {
     throw new Error("No worksheet found in workbook.");
@@ -212,8 +216,7 @@ export async function injectAnswersIntoXlsxBuffer(
   answers: InjectedAnswer[]
 ): Promise<Buffer> {
   const workbook = new ExcelJS.Workbook();
-  const bytes = input instanceof Uint8Array ? input : new Uint8Array(input);
-  await workbook.xlsx.load(bytes as any);
+  await workbook.xlsx.load(toXlsxLoadInput(input));
 
   for (const answer of answers) {
     const worksheet = workbook.getWorksheet(answer.sheetName);
@@ -223,7 +226,7 @@ export async function injectAnswersIntoXlsxBuffer(
   }
 
   const out = await workbook.xlsx.writeBuffer();
-  return Buffer.from(out as ArrayBuffer);
+  return Buffer.from(out);
 }
 
 export function parseQuestionnaireRows(content: string) {

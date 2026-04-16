@@ -1,7 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getCurrentOrgContext } from "@/lib/org";
-import { supabaseEnv } from "@/lib/supabase/env";
+import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 import { parseQuestionnaireXlsxBuffer } from "@trustrespond/parsers";
 import { STORAGE_BUCKETS } from "@trustrespond/db";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload-limits";
@@ -31,17 +30,13 @@ export async function POST(request: Request) {
     const parsed = await parseQuestionnaireXlsxBuffer(fileBuffer);
     const { userId, orgId } = await getCurrentOrgContext();
 
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!serviceKey) {
+    const db = createServiceRoleSupabaseClient();
+    if (!db) {
       return NextResponse.json(
         { ok: false, error: "Server misconfigured: SUPABASE_SERVICE_ROLE_KEY is required for questionnaire ingest" },
         { status: 500 }
       );
     }
-
-    const db = createClient(supabaseEnv.NEXT_PUBLIC_SUPABASE_URL, serviceKey, {
-      auth: { autoRefreshToken: false, persistSession: false }
-    });
 
     const objectPath = `${orgId}/${crypto.randomUUID()}-${file.name}`;
     const { error: uploadError } = await db.storage.from(STORAGE_BUCKETS.questionnaires).upload(objectPath, fileBuffer, {

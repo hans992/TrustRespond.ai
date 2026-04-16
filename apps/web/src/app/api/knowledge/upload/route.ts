@@ -1,21 +1,17 @@
-import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getCurrentOrgContext } from "@/lib/org";
-import { supabaseEnv } from "@/lib/supabase/env";
+import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 import { parsePdfToChunks } from "@trustrespond/parsers";
 import { RAGService } from "@trustrespond/ai";
 import {
   chunkArray,
   DOCUMENT_CHUNKS_INSERT_BATCH_SIZE,
   EMBEDDING_TEXT_BATCH_SIZE,
-  STORAGE_BUCKETS
+  STORAGE_BUCKETS,
+  toPgVector
 } from "@trustrespond/db";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload-limits";
 import { publicErrorMessage } from "@/lib/safe-error";
-
-function toPgVector(values: number[]) {
-  return `[${values.join(",")}]`;
-}
 
 export async function POST(request: Request) {
   try {
@@ -39,14 +35,10 @@ export async function POST(request: Request) {
 
     const { userId, orgId } = await getCurrentOrgContext();
 
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!serviceKey) {
+    const db = createServiceRoleSupabaseClient();
+    if (!db) {
       return NextResponse.json({ ok: false, error: "Server misconfigured: SUPABASE_SERVICE_ROLE_KEY is required for ingestion" }, { status: 500 });
     }
-
-    const db = createClient(supabaseEnv.NEXT_PUBLIC_SUPABASE_URL, serviceKey, {
-      auth: { autoRefreshToken: false, persistSession: false }
-    });
 
     const objectPath = `${orgId}/${crypto.randomUUID()}-${file.name}`;
 

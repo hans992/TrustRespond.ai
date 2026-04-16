@@ -5,17 +5,14 @@ import {
   chunkArray,
   DOCUMENT_CHUNKS_INSERT_BATCH_SIZE,
   EMBEDDING_TEXT_BATCH_SIZE,
-  STORAGE_BUCKETS
+  STORAGE_BUCKETS,
+  toPgVector
 } from "@trustrespond/db";
 
 interface IngestionArgs {
   documentId: string;
   orgId: string;
   storagePath: string;
-}
-
-function toPgVector(values: number[]) {
-  return `[${values.join(",")}]`;
 }
 
 export async function processKnowledgeDocumentIngestion(args: IngestionArgs) {
