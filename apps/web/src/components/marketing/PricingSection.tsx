@@ -17,10 +17,14 @@ const cardHover = {
 
 function PlanCard({
   plan,
-  billingCycle
+  billingCycle,
+  loadingPlanId,
+  onStartCheckout
 }: {
   plan: PricingPlanConfig;
   billingCycle: BillingCycle;
+  loadingPlanId: string | null;
+  onStartCheckout?: (planId: "starter" | "pro") => void | Promise<void>;
 }) {
   const baseArticle =
     "glass-card h-full rounded-3xl p-6 transition-shadow duration-300 hover:border-emerald/20 hover:shadow-card-hover";
@@ -30,6 +34,9 @@ function PlanCard({
     : `${baseArticle} border border-white/10`;
 
   const titleClass = plan.highlight ? "text-lg font-semibold text-emerald-light" : "text-lg font-semibold text-neutral-50";
+
+  const checkoutEnabled = (plan.id === "starter" || plan.id === "pro") && Boolean(onStartCheckout);
+  const loading = checkoutEnabled && loadingPlanId === plan.id;
 
   const priceBlock =
     plan.price.kind === "static" ? (
@@ -71,8 +78,20 @@ function PlanCard({
           </li>
         ))}
       </ul>
-      <GlowButton variant={plan.cta.variant} size="md" className="mt-6 w-full">
-        {plan.cta.label}
+      <GlowButton
+        variant={plan.cta.variant}
+        size="md"
+        className="mt-6 w-full"
+        disabled={loading}
+        onClick={
+          checkoutEnabled && onStartCheckout
+            ? () => {
+                void onStartCheckout(plan.id);
+              }
+            : undefined
+        }
+      >
+        {loading ? "Redirecting…" : plan.cta.label}
       </GlowButton>
     </motion.article>
   );
@@ -80,6 +99,27 @@ function PlanCard({
 
 export function PricingSection() {
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
+  const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
+
+  async function startCheckout(planId: "starter" | "pro") {
+    setLoadingPlanId(planId);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: planId, billingCycle })
+      });
+      const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
+      if (!res.ok || !data.url) {
+        window.alert(data.error ?? "Unable to start checkout. Sign in and try again.");
+        return;
+      }
+      window.location.href = data.url;
+    } finally {
+      setLoadingPlanId(null);
+    }
+  }
 
   return (
     <section id="pricing" className="relative px-6 py-28 md:py-32">
@@ -131,7 +171,12 @@ export function PricingSection() {
           <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {PRICING_PLANS.map((plan) => (
               <AnimatedSection key={plan.id} delay={plan.animatedDelay} direction="up">
-                <PlanCard plan={plan} billingCycle={billingCycle} />
+                <PlanCard
+                  plan={plan}
+                  billingCycle={billingCycle}
+                  loadingPlanId={loadingPlanId}
+                  onStartCheckout={plan.id === "starter" || plan.id === "pro" ? startCheckout : undefined}
+                />
               </AnimatedSection>
             ))}
           </div>
