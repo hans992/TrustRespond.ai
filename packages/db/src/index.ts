@@ -1,5 +1,6 @@
 export { chunkArray, DOCUMENT_CHUNKS_INSERT_BATCH_SIZE, EMBEDDING_TEXT_BATCH_SIZE } from "./batch";
 export { toPgVector } from "./vector";
+export { fetchQuestionnaireForOrg, replaceQuestionnaireQuestions } from "./questionnaires";
 export type Tier = "free" | "starter" | "pro" | "enterprise";
 export type Confidence = "high" | "medium" | "low";
 

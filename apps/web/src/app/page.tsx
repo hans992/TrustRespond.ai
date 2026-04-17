@@ -45,7 +45,7 @@ export default function LandingPage() {
 
             <AnimatedSection delay={0.24} priority>
               <div className="mt-1 flex flex-col gap-3 sm:flex-row">
-                <GlowButton variant="primary" size="lg" href="/signup">
+                <GlowButton variant="primary" size="lg" href="/auth/sign-up">
                   Start Free Trial
                 </GlowButton>
                 <GlowButton variant="secondary" size="lg" href="/demo">
@@ -130,7 +130,7 @@ export default function LandingPage() {
 
                     <div className="flex items-center justify-between border-t border-white/10 px-4 py-2.5 text-xs text-slate-500">
                       <span>
-                        247 questions - <span className="text-emerald-light">94% auto-completed</span> - 14 need review
+                        200+ questions - <span className="text-emerald-light">94% auto-completed</span> - 14 need review
                       </span>
                       <span className="cursor-pointer text-accent-light transition-colors hover:text-accent hover:underline">
                         Export .xlsx -&gt;

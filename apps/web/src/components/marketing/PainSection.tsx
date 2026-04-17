@@ -79,7 +79,7 @@ export function PainSection() {
             <div className="mt-6">
               <p className="text-sm text-slate-500">TrustRespond pays for itself on the first questionnaire.</p>
               <div className="mt-3">
-                <GlowButton variant="primary" size="md" href="/signup">
+                <GlowButton variant="primary" size="md" href="/auth/sign-up">
                   Start Free Trial - No Credit Card
                 </GlowButton>
               </div>

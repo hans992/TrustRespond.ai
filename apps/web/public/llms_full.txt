@@ -1,0 +1,118 @@
+# TrustRespond.ai — full site summary for LLMs
+
+Last updated: 2026-04-17
+
+Canonical origin: https://trustrespond.ai
+
+This file summarizes published marketing and legal content on the site. Competitor pricing and feature rows in the marketing comparison table are illustrative benchmarks only; verify directly with each vendor before relying on them.
+
+---
+
+## Operator and contact (from Impressum)
+
+- **Brand:** TrustRespond.ai
+- **Operated by:** Andrijanic Development
+- **Web:** https://andrijanic.dev
+- **Email (legal):** legal@trustrespond.ai
+- **Email (privacy):** privacy@trustrespond.ai
+- **Postal address:** Provided on written request to legal@trustrespond.ai (per Impressum).
+
+---
+
+## Product (high level)
+
+- B2B tool to complete security and compliance questionnaires using suggestions derived from customer-uploaded documents (policies, SOC 2 reports, etc.) and configured context.
+- Private RAG-style architecture: policies stored in an encrypted, tenant-isolated vector database; customer documents are not used to train third-party foundation models.
+- Human review before export or external sharing; confidence scores and review workflows are part of the product positioning.
+- **SOC 2 Type II:** in progress (not stated as completed on the public site).
+- **Data location:** Marketing states EU data centers (e.g. Frankfurt, Germany) and GDPR-first processing; details in Privacy Policy and DPA.
+- **Questionnaires:** Marketing copy uses examples such as “200+ row” Excel files; actual row counts depend on customer files.
+
+### File formats (from FAQ)
+
+- **Questionnaire upload:** .xlsx, .csv, .docx
+- **Policy documents:** PDF, .docx, .txt, plain text
+- **Exports:** Delivered in the original questionnaire format (e.g. structure-preserving .xlsx).
+
+### Accuracy (from FAQ)
+
+- Internal testing reference: 91–97% answer accuracy across 1,200+ questionnaire rows when the knowledge base contains relevant documentation; answers below 85% confidence flagged for review.
+
+---
+
+## Pricing (from public pricing section)
+
+Prices and entitlements below match the live marketing configuration.
+
+### Free
+
+- **Price:** $0 / month
+- **Description:** For founders exploring the product
+- **Includes:** 1 questionnaire per month; up to 5 policy documents; basic Trust Center page; Excel & CSV export
+
+### Starter
+
+- **Price:** $299 / month (monthly) or $239 / month (annual billing)
+- **Description:** For Series A teams closing enterprise deals
+- **Includes:** 10 questionnaires per month; up to 50 policy documents; branded Trust Center; Excel, CSV & Word export; email support
+
+### Pro
+
+- **Price:** $799 / month (monthly) or $639 / month (annual billing)
+- **Description:** For scaling teams with a dedicated sales motion
+- **Includes:** Unlimited questionnaires; unlimited policy documents; advanced Trust Center (NDA-gated docs); 5 team seats; EU AI Act evidence pack; priority AI processing; Slack & HubSpot integration; priority support
+
+### Enterprise
+
+- **Price:** Custom
+- **Description:** For companies with strict compliance requirements
+- **Includes:** Everything in Pro; SSO / SAML 2.0; BYOK (Bring Your Own LLM Key); Salesforce & HubSpot CRM sync; dedicated account manager; SLA guarantees; on-premise RAG option; custom data residency (EU)
+
+---
+
+## TrustRespond column only — comparison table (marketing)
+
+The site shows a competitive comparison matrix. Below is **only the TrustRespond column** as presented there. Other vendors’ cells are omitted here; treat any competitor figures as unverified.
+
+| Feature | TrustRespond (as shown on site) |
+| --- | --- |
+| Starting Price | $0 (Free tier) |
+| AI Questionnaire Auto-fill | Included |
+| Format-preserving Excel Export | Yes |
+| GDPR-native (EU data residency) | Yes |
+| EU AI Act Evidence Pack | Yes |
+| Public Trust Center | Yes |
+| NDA-gated Documents | Pro+ |
+| Self-serve Onboarding | Yes |
+| Free Tier Available | Yes |
+| BYOK (Bring Your Own LLM Key) | Yes |
+
+---
+
+## EU AI Act messaging (from AI system information page)
+
+- Product is positioned as AI-assisted with meaningful human oversight before export or sharing.
+- “EU AI Act Ready” / related marketing refers to documentation, transparency, and human review workflows—not a certification by a regulator.
+- Customers remain responsible for whether their deployment triggers additional obligations.
+
+---
+
+## Key URLs
+
+- https://trustrespond.ai/
+- https://trustrespond.ai/auth/sign-up
+- https://trustrespond.ai/auth/sign-in
+- https://trustrespond.ai/demo
+- https://trustrespond.ai/legal/privacy-policy
+- https://trustrespond.ai/legal/terms-of-service
+- https://trustrespond.ai/legal/dpa
+- https://trustrespond.ai/legal/cookies
+- https://trustrespond.ai/legal/impressum
+- https://trustrespond.ai/legal/ai-system-information
+- https://trustrespond.ai/llms.txt
+
+---
+
+## Shorter index
+
+See https://trustrespond.ai/llms.txt for a compact llms.txt index.

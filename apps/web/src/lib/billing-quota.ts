@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { z } from "zod";
 
 export interface QuotaPayload {
   used: number;
@@ -7,15 +8,22 @@ export interface QuotaPayload {
   yearMonth: string;
 }
 
+const quotaRowSchema = z
+  .object({
+    used: z.coerce.number(),
+    remaining: z.coerce.number().nullable(),
+    limit: z.coerce.number().nullable(),
+    yearMonth: z.coerce.string()
+  })
+  .passthrough();
+
 function parseQuotaRow(data: unknown): QuotaPayload {
-  const o = data as Record<string, unknown>;
-  const lim = o.limit;
-  const rem = o.remaining;
+  const o = quotaRowSchema.parse(data);
   return {
-    used: Number(o.used ?? 0),
-    remaining: rem === null || rem === undefined ? null : Number(rem),
-    limit: lim === null || lim === undefined ? null : Number(lim),
-    yearMonth: String(o.yearMonth ?? "")
+    used: o.used,
+    remaining: o.remaining,
+    limit: o.limit,
+    yearMonth: o.yearMonth
   };
 }
 

@@ -10,8 +10,8 @@
   "dependencies": {
     "@ai-sdk/google": "^3.0.63",
     "@supabase/supabase-js": "^2.103.0",
-    "@trustrespond/db": "0.1.0"
-    ,
+    "@trustrespond/db": "0.1.0",
+    "@trustrespond/parsers": "0.1.0",
     "ai": "^6.0.159",
     "zod": "^4.3.6"
   },

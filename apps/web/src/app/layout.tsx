@@ -1,6 +1,6 @@
 import "./globals.css";
-import { ConditionalAnalytics } from "@/components/marketing/ConditionalAnalytics";
-import { CookieConsentBanner } from "@/components/marketing/CookieConsentBanner";
+import { ConditionalAnalytics } from "@/components/consent/ConditionalAnalytics";
+import { CookieConsentBanner } from "@/components/consent/CookieConsentBanner";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Inter } from "next/font/google";

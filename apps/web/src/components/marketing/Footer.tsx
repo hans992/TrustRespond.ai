@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import { GlowButton } from "../ui/GlowButton";
+import { FOOTER_NAV_SECTIONS } from "@/data/marketing/footer-nav";
 
 const footerLinkClass =
   "mt-2 block text-sm text-neutral-400 transition-all duration-200 ease-out hover:text-slate-100 hover:-translate-y-px";
@@ -26,7 +27,7 @@ export function Footer() {
             Join EU SaaS teams who have stopped losing deals to slow security reviews.
           </p>
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
-            <GlowButton variant="primary" size="lg" href="/signup">
+            <GlowButton variant="primary" size="lg" href="/auth/sign-up">
               Start Free Trial
             </GlowButton>
             <GlowButton variant="secondary" size="lg" href="/demo">
@@ -53,118 +54,31 @@ export function Footer() {
           </span>
         </div>
 
-        <div>
-          <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Product</h3>
-          <ul className="mt-2">
-            <li>
-              <Link href="/#features" className={footerLinkClass}>
-                Features
-              </Link>
-            </li>
-            <li>
-              <Link href="/#how-it-works" className={footerLinkClass}>
-                How It Works
-              </Link>
-            </li>
-            <li>
-              <Link href="/#pricing" className={footerLinkClass}>
-                Pricing
-              </Link>
-            </li>
-            <li>
-              <Link href="/#features" className={footerLinkClass}>
-                Trust Center
-              </Link>
-            </li>
-            <li>
-              <Link href="/#security" className={footerLinkClass}>
-                Security
-              </Link>
-            </li>
-            <li>
-              <Link href="/changelog" className={footerLinkClass}>
-                Changelog
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Company</h3>
-          <ul className="mt-2">
-            <li>
-              <Link href="/about" className={footerLinkClass}>
-                About
-              </Link>
-            </li>
-            <li>
-              <Link href="/blog" className={footerLinkClass}>
-                Blog
-              </Link>
-            </li>
-            <li>
-              <Link href="/careers" className={footerLinkClass}>
-                Careers
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className={footerLinkClass}>
-                Contact
-              </Link>
-            </li>
-            <li>
-              <a
-                href="https://andrijanic.dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={footerLinkClass}
-              >
-                andrijanic.dev
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Legal</h3>
-          <ul className="mt-2">
-            <li>
-              <Link href="/#privacy-notice" className={footerLinkClass}>
-                Privacy summary (homepage)
-              </Link>
-            </li>
-            <li>
-              <Link href="/legal/privacy-policy" className={footerLinkClass}>
-                Privacy Policy
-              </Link>
-            </li>
-            <li>
-              <Link href="/legal/terms-of-service" className={footerLinkClass}>
-                Terms of Service
-              </Link>
-            </li>
-            <li>
-              <Link href="/legal/dpa" className={footerLinkClass}>
-                Data Processing Agreement
-              </Link>
-            </li>
-            <li>
-              <Link href="/legal/cookies" className={footerLinkClass}>
-                Cookie Policy
-              </Link>
-            </li>
-            <li>
-              <Link href="/legal/impressum" className={footerLinkClass}>
-                Impressum
-              </Link>
-            </li>
-            <li>
-              <Link href="/legal/ai-system-information" className={footerLinkClass}>
-                AI system information
-              </Link>
-            </li>
-          </ul>
-        </div>
+        {FOOTER_NAV_SECTIONS.map((section) => (
+          <div key={section.title}>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">{section.title}</h3>
+            <ul className="mt-2">
+              {section.links.map((link) => (
+                <li key={`${section.title}-${link.href}-${link.label}`}>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      target={link.href.startsWith("mailto:") ? undefined : "_blank"}
+                      rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                      className={footerLinkClass}
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link href={link.href} className={footerLinkClass}>
+                      {link.label}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
 
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 border-t border-white/10 px-6 py-8 md:flex-row">

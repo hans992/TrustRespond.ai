@@ -1,3 +1,5 @@
+-- Pairs with `004_vector_rpc.sql`: same distance/order/limit pattern as `match_chunks`, but uses `p_org_id`
+-- instead of `current_org_id()` so trusted service-role API code can scope search after user auth.
 -- Server-side vector search with service role: avoids `current_org_id()` recursion in JWT-backed `match_chunks`.
 -- Only `service_role` may execute; org is supplied by trusted API code after auth (`getCurrentOrgContext`).
 -- Required parameters first; defaults last (PostgreSQL rule 42P13). Supabase JS rpc() sends named JSON keys.

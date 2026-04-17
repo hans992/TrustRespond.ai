@@ -51,7 +51,7 @@ export function TrustCenterShowcase() {
               ))}
             </div>
 
-            <GlowButton variant="primary" size="md" href="/signup" className="mt-8">
+            <GlowButton variant="primary" size="md" href="/auth/sign-up" className="mt-8">
               See a Live Example →
             </GlowButton>
           </div>

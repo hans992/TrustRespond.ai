@@ -11,6 +11,9 @@
   "dependencies": {
     "zod": "^4.3.6"
   },
+  "peerDependencies": {
+    "@supabase/supabase-js": "^2.103.0"
+  },
   "devDependencies": {
     "typescript": "^6.0.2",
     "vitest": "^4.1.4"

@@ -72,7 +72,7 @@ export function HowItWorks() {
               </div>
               <h3 className="mt-6 text-xl font-semibold text-neutral-50">Upload the Client&apos;s Questionnaire</h3>
               <p className="mt-3 text-sm leading-relaxed text-slate-400">
-                Drop your client&apos;s blank Excel file - even if it has 247 rows, merged cells, dropdown validations, and
+                Drop your client&apos;s blank Excel file - even if it has 200+ rows, merged cells, dropdown validations, and
                 custom formatting. TrustRespond reads the structure without touching the formulas.
               </p>
               <span className="mt-4 inline-block rounded-full bg-surface-elevated px-3 py-1 text-xs text-slate-500">

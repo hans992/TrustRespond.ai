@@ -1,15 +1,8 @@
 import { NextResponse } from "next/server";
 import { getCurrentOrgContext } from "@/lib/org";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
-import { parsePdfToChunks } from "@trustrespond/parsers";
-import { RAGService } from "@trustrespond/ai";
-import {
-  chunkArray,
-  DOCUMENT_CHUNKS_INSERT_BATCH_SIZE,
-  EMBEDDING_TEXT_BATCH_SIZE,
-  STORAGE_BUCKETS,
-  toPgVector
-} from "@trustrespond/db";
+import { ingestKnowledgeDocumentFromPdfBuffer, KnowledgeEmbeddingError } from "@trustrespond/ai";
+import { STORAGE_BUCKETS } from "@trustrespond/db";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload-limits";
 import { publicErrorMessage } from "@/lib/safe-error";
 
@@ -79,67 +72,40 @@ export async function POST(request: Request) {
       );
     }
 
-    let parsed;
     try {
-      parsed = await parsePdfToChunks(Buffer.from(await downloaded.arrayBuffer()));
-    } catch (parseErr) {
-      await db.from("documents").update({ status: "error" }).eq("id", doc.id);
-      const msg = publicErrorMessage(parseErr, "PDF parse failed");
-      return NextResponse.json({ ok: false, error: `pdf parse: ${msg}` }, { status: 400 });
-    }
-    if (parsed.chunks.length === 0) {
-      await db.from("documents").update({ status: "error" }).eq("id", doc.id);
-      return NextResponse.json({ ok: false, error: "No text extracted from PDF" }, { status: 400 });
-    }
-
-    const rag = new RAGService();
-    const allEmbeddings: number[][] = [];
-    try {
-      for (let i = 0; i < parsed.chunks.length; i += EMBEDDING_TEXT_BATCH_SIZE) {
-        const slice = parsed.chunks.slice(i, i + EMBEDDING_TEXT_BATCH_SIZE);
-        const batchEmb = await rag.generateEmbeddings(slice.map((chunk) => chunk.content));
-        allEmbeddings.push(...batchEmb);
-      }
-    } catch (embedErr) {
-      await db.from("documents").update({ status: "error" }).eq("id", doc.id);
-      const msg = publicErrorMessage(embedErr, "Embedding generation failed");
-      return NextResponse.json(
-        {
-          ok: false,
-          error:
-            process.env.NODE_ENV === "development"
-              ? `embedding generation failed (check GOOGLE_GENERATIVE_AI_API_KEY / model access): ${msg}`
-              : msg
-        },
-        { status: 502 }
-      );
-    }
-    const chunkRows = parsed.chunks.map((chunk, index) => ({
-      org_id: orgId,
-      document_id: doc.id,
-      content: chunk.content,
-      metadata: chunk.metadata,
-      embedding: toPgVector(allEmbeddings[index] ?? [])
-    }));
-
-    const batches = chunkArray(chunkRows, DOCUMENT_CHUNKS_INSERT_BATCH_SIZE);
-    for (let b = 0; b < batches.length; b++) {
-      const { error: chunksError } = await db.from("document_chunks").insert(batches[b]);
-      if (chunksError) {
-        await db.from("documents").update({ status: "error" }).eq("id", doc.id);
+      const buffer = Buffer.from(await downloaded.arrayBuffer());
+      const { chunksInserted } = await ingestKnowledgeDocumentFromPdfBuffer(db, {
+        orgId,
+        documentId: doc.id,
+        buffer
+      });
+      return NextResponse.json({ ok: true, document: doc, chunksInserted });
+    } catch (ingestErr) {
+      if (ingestErr instanceof KnowledgeEmbeddingError) {
+        const msg = publicErrorMessage(ingestErr, "Embedding generation failed");
         return NextResponse.json(
           {
             ok: false,
-            error: `Failed inserting embedding batch ${b + 1}/${batches.length} (${batches[b].length} rows): ${publicErrorMessage(chunksError)}`
+            error:
+              process.env.NODE_ENV === "development"
+                ? `embedding generation failed (check GOOGLE_GENERATIVE_AI_API_KEY / model access): ${msg}`
+                : msg
           },
-          { status: 400 }
+          { status: 502 }
         );
       }
+      const msg = publicErrorMessage(ingestErr, "Ingestion failed");
+      if (String((ingestErr as Error)?.message ?? "").includes("No text extracted from PDF")) {
+        return NextResponse.json({ ok: false, error: "No text extracted from PDF" }, { status: 400 });
+      }
+      if (String((ingestErr as Error)?.message ?? "").includes("PDF parse failed")) {
+        return NextResponse.json({ ok: false, error: `pdf parse: ${msg}` }, { status: 400 });
+      }
+      if (String((ingestErr as Error)?.message ?? "").includes("Failed inserting embedding batch")) {
+        return NextResponse.json({ ok: false, error: msg }, { status: 400 });
+      }
+      return NextResponse.json({ ok: false, error: msg }, { status: 400 });
     }
-
-    await db.from("documents").update({ status: "ready", page_count: parsed.chunks.length }).eq("id", doc.id);
-
-    return NextResponse.json({ ok: true, document: doc, chunksInserted: parsed.chunks.length });
   } catch (error) {
     const msg = publicErrorMessage(error, "Upload failed");
     return NextResponse.json({ ok: false, error: `upload handler: ${msg}` }, { status: 500 });

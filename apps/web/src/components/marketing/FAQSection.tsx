@@ -9,7 +9,7 @@ const faqs = [
   {
     question: "Is my data secure? Do you train on my documents?",
     answer:
-      "Your documents are never used to train any AI model. TrustRespond uses a private RAG (Retrieval-Augmented Generation) architecture - your policies are stored in an encrypted, tenant-isolated vector database. Only your account can query your documents. We are SOC 2 Type II compliant and all data is stored in EU-based infrastructure.",
+      "Your documents are never used to train any AI model. TrustRespond uses a private RAG (Retrieval-Augmented Generation) architecture - your policies are stored in an encrypted, tenant-isolated vector database. Only your account can query your documents. SOC 2 Type II is in progress; all data is stored in EU-based infrastructure.",
   },
   {
     question: "Is TrustRespond GDPR compliant?",
@@ -29,7 +29,7 @@ const faqs = [
   {
     question: "Can I use my own OpenAI or Anthropic API key?",
     answer:
-      "Yes. The Pro and Enterprise plans support BYOK (Bring Your Own Key). This means your documents are processed using your own API key, giving you full control over data routing, cost, and model selection. Enterprise customers can also deploy TrustRespond with an on-premise LLM for complete data sovereignty.",
+      "The Enterprise plan supports BYOK (Bring Your Own Key). This means your documents can be processed using your own API key, giving you full control over data routing, cost, and model selection. Enterprise customers can also deploy TrustRespond with an on-premise LLM for complete data sovereignty.",
   },
   {
     question: "How long does onboarding take?",

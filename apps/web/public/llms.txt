@@ -1,0 +1,25 @@
+# TrustRespond.ai
+
+> TrustRespond reads your SOC 2 and security policies, then auto-completes large Excel security questionnaires in under 2 hours without breaking formatting. Built for EU SaaS teams. SOC 2 Type II is in progress. Documents are not used to train third-party foundation models; customer content stays tenant-isolated.
+
+## Primary pages
+
+- [Home](https://trustrespond.ai/): Product overview, pricing section, FAQ, and privacy summary.
+- [Sign up](https://trustrespond.ai/auth/sign-up): Create an account (free trial).
+- [Sign in](https://trustrespond.ai/auth/sign-in): Existing users.
+- [Book a demo](https://trustrespond.ai/demo): Request a demo via email.
+
+## Legal and transparency
+
+- [Privacy Policy](https://trustrespond.ai/legal/privacy-policy)
+- [Terms of Service](https://trustrespond.ai/legal/terms-of-service)
+- [Data Processing Agreement (DPA)](https://trustrespond.ai/legal/dpa)
+- [Cookie Policy](https://trustrespond.ai/legal/cookies)
+- [Impressum](https://trustrespond.ai/legal/impressum)
+- [AI system information](https://trustrespond.ai/legal/ai-system-information): EU AI Act transparency; not a regulator certification.
+
+## Extended machine-readable summary
+
+- [llms_full.txt](https://trustrespond.ai/llms_full.txt): Pricing, product facts, operator contact, and comparison-table disclaimers.
+
+Last updated: 2026-04-17
