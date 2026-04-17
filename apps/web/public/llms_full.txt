@@ -10,12 +10,12 @@ This file summarizes published marketing and legal content on the site. Competit
 
 ## Operator and contact (from Impressum)
 
-- **Brand:** TrustRespond.ai
-- **Operated by:** Andrijanic Development
-- **Web:** https://andrijanic.dev
-- **Email (legal):** legal@trustrespond.ai
-- **Email (privacy):** privacy@trustrespond.ai
-- **Postal address:** Provided on written request to legal@trustrespond.ai (per Impressum).
+- **Brand:** TrustRespond.ai (SaaS; Kleingewerbe sole proprietor: Damir Andrijanic)
+- **Postal address:** Damir Andrijanic, c/o Postflex PFX-202-985, Emsdettener Str. 10, 48268 Greven, Germany
+- **Email:** damir@andrijanic.com
+- **Phone:** +49 160 96465890
+- **VAT ID (USt-IdNr.):** DE461042625
+- **B2B:** Offered to businesses and public-law entities only (Section 14 BGB); not to consumers (Section 13 BGB); no VSBG consumer arbitration (Section 36 VSBG).
 
 ---
 
