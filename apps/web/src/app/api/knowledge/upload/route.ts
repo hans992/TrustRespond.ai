@@ -79,7 +79,11 @@ export async function POST(request: Request) {
         documentId: doc.id,
         buffer
       });
-      return NextResponse.json({ ok: true, document: doc, chunksInserted });
+      return NextResponse.json({
+        ok: true,
+        document: { ...doc, status: "ready" as const },
+        chunksInserted
+      });
     } catch (ingestErr) {
       if (ingestErr instanceof KnowledgeEmbeddingError) {
         const msg = publicErrorMessage(ingestErr, "Embedding generation failed");
