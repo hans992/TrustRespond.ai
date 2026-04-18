@@ -48,7 +48,7 @@
     "@types/react-dom": "^19.2.2",
     "dotenv": "^16.4.7",
     "eslint": "^9.39.4",
-    "eslint-config-next": "^16.2.3",
+    "eslint-config-next": "^16.2.4",
     "exceljs": "^4.4.0",
     "pdf-lib": "^1.17.1",
     "typescript": "^6.0.2",
