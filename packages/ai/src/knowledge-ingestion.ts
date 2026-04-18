@@ -34,9 +34,10 @@ export async function ingestKnowledgeDocumentFromPdfBuffer(
   let parsed;
   try {
     parsed = await parsePdfToChunks(buffer);
-  } catch {
+  } catch (err) {
     await markDocumentError();
-    throw new Error("PDF parse failed");
+    const detail = err instanceof Error ? err.message : String(err);
+    throw new Error(`PDF parse failed: ${detail}`, { cause: err instanceof Error ? err : undefined });
   }
 
   if (parsed.chunks.length === 0) {
