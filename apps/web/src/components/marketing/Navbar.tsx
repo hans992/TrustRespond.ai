@@ -1,9 +1,12 @@
 "use client";
 
+import type { User } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { GlowButton } from "../ui/GlowButton";
 
 const SECTION_IDS = ["how-it-works", "trust-center", "pricing", "security"] as const;
@@ -53,9 +56,28 @@ function useActiveSection(): SectionId | null {
 }
 
 export function Navbar() {
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const activeSection = useActiveSection();
+
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient();
+    let cancelled = false;
+    void supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!cancelled) setUser(session?.user ?? null);
+    });
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,6 +88,13 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  async function handleSignOut() {
+    const supabase = createSupabaseBrowserClient();
+    await supabase.auth.signOut();
+    router.refresh();
+    setIsMobileMenuOpen(false);
+  }
 
   const scrollToSection = (sectionId: SectionId) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
@@ -107,12 +136,25 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center gap-2 md:flex">
-          <GlowButton href="/auth/sign-in" variant="ghost" size="sm">
-            Log in
-          </GlowButton>
-          <GlowButton href="/auth/sign-up" variant="primary" size="sm">
-            Start Free Trial
-          </GlowButton>
+          {user ? (
+            <>
+              <GlowButton href="/app" variant="primary" size="sm">
+                Workspace
+              </GlowButton>
+              <GlowButton variant="ghost" size="sm" onClick={() => void handleSignOut()}>
+                Log out
+              </GlowButton>
+            </>
+          ) : (
+            <>
+              <GlowButton href="/auth/sign-in" variant="ghost" size="sm">
+                Log in
+              </GlowButton>
+              <GlowButton href="/auth/sign-up" variant="primary" size="sm">
+                Start Free Trial
+              </GlowButton>
+            </>
+          )}
         </div>
 
         <button
@@ -151,12 +193,25 @@ export function Navbar() {
                 );
               })}
               <div className="mt-2 flex items-center gap-2">
-                <GlowButton href="/auth/sign-in" variant="ghost" size="sm" className="flex-1 justify-center">
-                  Log in
-                </GlowButton>
-                <GlowButton href="/auth/sign-up" variant="primary" size="sm" className="flex-1 justify-center">
-                  Start Free Trial
-                </GlowButton>
+                {user ? (
+                  <>
+                    <GlowButton href="/app" variant="primary" size="sm" className="flex-1 justify-center">
+                      Workspace
+                    </GlowButton>
+                    <GlowButton variant="ghost" size="sm" className="flex-1 justify-center" onClick={() => void handleSignOut()}>
+                      Log out
+                    </GlowButton>
+                  </>
+                ) : (
+                  <>
+                    <GlowButton href="/auth/sign-in" variant="ghost" size="sm" className="flex-1 justify-center">
+                      Log in
+                    </GlowButton>
+                    <GlowButton href="/auth/sign-up" variant="primary" size="sm" className="flex-1 justify-center">
+                      Start Free Trial
+                    </GlowButton>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { FileDropZone } from "@/components/ui/FileDropZone";
 import { GlowButton } from "@/components/ui/GlowButton";
 
@@ -14,10 +14,17 @@ const clearLinkClass =
 export function KnowledgeUploadForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, setPending] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [notice, setNotice] = useState<{ kind: "success" | "error"; text: string } | null>(null);
+
+  function onFileChange(e: ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    setSelectedFileName(f ? f.name : null);
+  }
 
   function clearSuccess() {
     setNotice(null);
+    setSelectedFileName(null);
     formRef.current?.reset();
   }
 
@@ -53,6 +60,7 @@ export function KnowledgeUploadForm() {
         text: `Uploaded “${name}” — ${n} chunk${n === 1 ? "" : "s"} indexed.`
       });
       form.reset();
+      setSelectedFileName(null);
     } catch {
       setNotice({ kind: "error", text: "Network error — try again." });
     } finally {
@@ -69,6 +77,8 @@ export function KnowledgeUploadForm() {
         disabled={pending}
         title="Drop PDF here or click to browse"
         hint="Accepted: PDF · Max size per your plan"
+        fileName={selectedFileName}
+        onChange={onFileChange}
       />
       <GlowButton type="submit" size="md" disabled={pending}>
         {pending ? "Uploading…" : "Upload PDF"}

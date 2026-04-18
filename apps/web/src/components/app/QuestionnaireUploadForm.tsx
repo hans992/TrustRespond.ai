@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { FileDropZone } from "@/components/ui/FileDropZone";
 import { Input } from "@/components/ui/Input";
 import { GlowButton } from "@/components/ui/GlowButton";
@@ -15,10 +15,17 @@ const clearLinkClass =
 export function QuestionnaireUploadForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const [pending, setPending] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [notice, setNotice] = useState<{ kind: "success" | "error"; text: string } | null>(null);
+
+  function onFileChange(e: ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    setSelectedFileName(f ? f.name : null);
+  }
 
   function clearSuccess() {
     setNotice(null);
+    setSelectedFileName(null);
     formRef.current?.reset();
   }
 
@@ -58,6 +65,7 @@ export function QuestionnaireUploadForm() {
         text: `Uploaded “${name}”${type} — saved to your workspace.`
       });
       form.reset();
+      setSelectedFileName(null);
     } catch {
       setNotice({ kind: "error", text: "Network error — try again." });
     } finally {
@@ -78,6 +86,8 @@ export function QuestionnaireUploadForm() {
         disabled={pending}
         title="Drop questionnaire file or click to browse"
         hint="Accepted: .xlsx, .csv, .docx · Max size per your plan"
+        fileName={selectedFileName}
+        onChange={onFileChange}
       />
       <GlowButton type="submit" size="md" disabled={pending}>
         {pending ? "Uploading…" : "Upload Questionnaire"}
