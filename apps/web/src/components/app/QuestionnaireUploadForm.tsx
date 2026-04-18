@@ -17,6 +17,7 @@ export function QuestionnaireUploadForm() {
   const [pending, setPending] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [notice, setNotice] = useState<{ kind: "success" | "error"; text: string } | null>(null);
+  const [uploadedQuestionnaireId, setUploadedQuestionnaireId] = useState<string | null>(null);
 
   function onFileChange(e: ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -26,6 +27,7 @@ export function QuestionnaireUploadForm() {
   function clearSuccess() {
     setNotice(null);
     setSelectedFileName(null);
+    setUploadedQuestionnaireId(null);
     formRef.current?.reset();
   }
 
@@ -48,7 +50,7 @@ export function QuestionnaireUploadForm() {
       const data: {
         ok?: boolean;
         error?: string;
-        questionnaire?: { filename?: string; file_type?: string; status?: string };
+        questionnaire?: { id?: string; filename?: string; file_type?: string; status?: string };
       } = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) {
         setNotice({
@@ -64,6 +66,7 @@ export function QuestionnaireUploadForm() {
         kind: "success",
         text: `Uploaded “${name}”${type} — saved to your workspace.`
       });
+      setUploadedQuestionnaireId(q?.id ?? null);
       form.reset();
       setSelectedFileName(null);
     } catch {
@@ -104,7 +107,16 @@ export function QuestionnaireUploadForm() {
               </button>
             </div>
           </div>
-          <GlowButton href="/app/review" variant="primary" size="md" className="w-full sm:w-auto">
+          <GlowButton
+            href={
+              uploadedQuestionnaireId
+                ? `/app/review?questionnaireId=${encodeURIComponent(uploadedQuestionnaireId)}`
+                : "/app/review"
+            }
+            variant="primary"
+            size="md"
+            className="w-full sm:w-auto"
+          >
             Proceed to AI Review & Generation
           </GlowButton>
         </>

@@ -1,6 +1,7 @@
 "use client";
 
 import { HelpCircle, Loader2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { ConfidenceBadge } from "@trustrespond/ui";
 import { FileDropZone } from "@/components/ui/FileDropZone";
 import { GlowButton } from "@/components/ui/GlowButton";
@@ -8,20 +9,27 @@ import { Input } from "@/components/ui/Input";
 import { useReviewWorkflow } from "@/hooks/useReviewWorkflow";
 
 export function ReviewPageContent() {
+  const searchParams = useSearchParams();
+  const questionnaireIdParam = searchParams.get("questionnaireId");
+
   const {
     file,
-    setFile,
+    handleFileChange,
     prospectName,
     setProspectName,
     parseResult,
     busy,
     error,
+    bootstrapError,
     downloadUrl,
     generationStats,
     busyActive,
     handleDryRunParse,
-    handleConfirmAndGenerate
-  } = useReviewWorkflow();
+    handleConfirmAndGenerate,
+    loadedFromWorkspace
+  } = useReviewWorkflow({ initialQuestionnaireId: questionnaireIdParam });
+
+  const displayFileLabel = file ? file.name : parseResult ? parseResult.filename : "Choose a file";
 
   return (
     <main className="max-w-4xl">
@@ -29,7 +37,7 @@ export function ReviewPageContent() {
         <div
           className="mb-8 h-1 w-full overflow-hidden rounded-full bg-white/10"
           role="progressbar"
-          aria-valuetext={busy}
+          aria-valuetext={busy === "idle" ? "Loading questionnaire" : busy}
           aria-live="polite"
         >
           <div className="h-full w-1/3 animate-indeterminate-bar rounded-full bg-gradient-to-r from-transparent via-emerald to-transparent" />
@@ -41,11 +49,26 @@ export function ReviewPageContent() {
           Mapping Confirmation
         </h1>
         <p className="mt-2 text-slate-300">
-          Upload your Excel questionnaire, confirm our mapping, then start AI generation.
+          Confirm column mapping for your Excel questionnaire, then start AI generation. You can open this page from your
+          workspace after upload — no need to select the file again.
         </p>
       </div>
 
+      {bootstrapError ? (
+        <div
+          className="mb-6 rounded-2xl border border-amber-500/30 bg-amber-950/20 px-5 py-4 text-sm text-amber-100"
+          role="alert"
+        >
+          {bootstrapError} You can still pick an .xlsx file below and click Analyze Workbook.
+        </div>
+      ) : null}
+
       <section className="glass-card noise-overlay mb-6 rounded-3xl p-8">
+        {loadedFromWorkspace ? (
+          <p className="mb-4 rounded-lg border border-emerald/25 bg-emerald/[0.08] px-4 py-3 text-sm text-slate-200">
+            Using questionnaire from your workspace: <span className="font-medium text-emerald-light">{parseResult?.filename}</span>
+          </p>
+        ) : null}
         <label className="mb-4 block text-sm font-medium text-slate-300" htmlFor="review-prospect">
           Prospect Name (optional)
         </label>
@@ -61,8 +84,8 @@ export function ReviewPageContent() {
             title="Excel workbook (.xlsx)"
             hint="Accepted: .xlsx · Max size per your plan"
             accept=".xlsx"
-            fileName={file ? file.name : "Choose a file"}
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            fileName={displayFileLabel}
+            onChange={handleFileChange}
             className="min-w-[200px] flex-1"
             minHeightClass="min-h-[100px]"
             aria-label="Upload Excel questionnaire workbook"

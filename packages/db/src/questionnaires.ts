@@ -5,6 +5,7 @@ type QuestionnaireRow = {
   filename: string;
   file_type: string;
   s3_key_original: string;
+  prospect_name: string | null;
 };
 
 export async function fetchQuestionnaireForOrg(
@@ -14,7 +15,7 @@ export async function fetchQuestionnaireForOrg(
 ): Promise<{ data: QuestionnaireRow | null; error: Error | null }> {
   const { data, error } = await db
     .from("questionnaires")
-    .select("id,filename,file_type,s3_key_original")
+    .select("id,filename,file_type,s3_key_original,prospect_name")
     .eq("id", questionnaireId)
     .eq("org_id", orgId)
     .single();

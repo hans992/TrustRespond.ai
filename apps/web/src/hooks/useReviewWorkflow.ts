@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export type ParseResult = {
   questionnaireId: string;
@@ -15,7 +15,14 @@ export type ParseResult = {
 
 export type BusyState = "idle" | "parsing" | "generating" | "exporting";
 
-export function useReviewWorkflow() {
+export type UseReviewWorkflowOptions = {
+  /** Load mapping from a questionnaire already uploaded on the workspace (query param). */
+  initialQuestionnaireId?: string | null;
+};
+
+export function useReviewWorkflow(options?: UseReviewWorkflowOptions) {
+  const initialQuestionnaireId = options?.initialQuestionnaireId?.trim() || null;
+
   const [file, setFile] = useState<File | null>(null);
   const [prospectName, setProspectName] = useState("");
   const [parseResult, setParseResult] = useState<ParseResult | null>(null);
@@ -28,7 +35,63 @@ export function useReviewWorkflow() {
     flaggedForReview: number;
   } | null>(null);
 
-  const busyActive = busy !== "idle";
+  const [bootstrapBusy, setBootstrapBusy] = useState(Boolean(initialQuestionnaireId));
+  const [bootstrapError, setBootstrapError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!initialQuestionnaireId) {
+      setBootstrapBusy(false);
+      return;
+    }
+
+    let cancelled = false;
+    setBootstrapBusy(true);
+    setBootstrapError(null);
+
+    void (async () => {
+      try {
+        const res = await fetch(`/api/questionnaires/${initialQuestionnaireId}/mapping`);
+        const json = (await res.json()) as { ok: boolean; error?: string } & Partial<ParseResult> & {
+          prospectName?: string;
+        };
+        if (cancelled) return;
+        if (!res.ok || !json.ok || !json.questionnaireId || !json.detected || !json.filename) {
+          setBootstrapError(json.error ?? "Could not load questionnaire mapping.");
+          setBootstrapBusy(false);
+          return;
+        }
+        setParseResult({
+          questionnaireId: json.questionnaireId,
+          filename: json.filename,
+          detected: json.detected
+        });
+        if (typeof json.prospectName === "string") {
+          setProspectName(json.prospectName);
+        }
+      } catch {
+        if (!cancelled) setBootstrapError("Network error — try again or upload a file below.");
+      } finally {
+        if (!cancelled) setBootstrapBusy(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [initialQuestionnaireId]);
+
+  const busyActive = bootstrapBusy || busy !== "idle";
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    setFile(f);
+    if (f) {
+      setParseResult(null);
+      setDownloadUrl(null);
+      setGenerationStats(null);
+      setError(null);
+    }
+  }, []);
 
   const handleDryRunParse = useCallback(async () => {
     if (!file) return;
@@ -85,16 +148,18 @@ export function useReviewWorkflow() {
 
   return {
     file,
-    setFile,
+    handleFileChange,
     prospectName,
     setProspectName,
     parseResult,
     busy,
     error,
+    bootstrapError,
     downloadUrl,
     generationStats,
     busyActive,
     handleDryRunParse,
-    handleConfirmAndGenerate
+    handleConfirmAndGenerate,
+    loadedFromWorkspace: Boolean(initialQuestionnaireId && parseResult && !file)
   };
 }
