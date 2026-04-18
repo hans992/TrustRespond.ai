@@ -12,7 +12,7 @@
     "@supabase/supabase-js": "^2.103.0",
     "@trustrespond/db": "0.1.0",
     "@trustrespond/parsers": "0.1.0",
-    "ai": "^6.0.159",
+    "ai": "^6.0.168",
     "zod": "^4.3.6"
   },
   "devDependencies": {
