@@ -13,7 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "dommatrix": "^0.1.1",
+    "dommatrix": "^1.0.3",
     "exceljs": "^4.4.0",
     "mammoth": "^1.12.0",
     "pdf-parse": "^2.4.5"
