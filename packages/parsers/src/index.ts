@@ -1,5 +1,6 @@
 import "./pdf-node-polyfills";
 import { PDFParse } from "pdf-parse";
+import "./pdf-worker-init";
 import ExcelJS from "exceljs";
 
 export interface ParsedChunk {
