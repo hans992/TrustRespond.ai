@@ -28,3 +28,9 @@ jobs:
 
       - name: Unit tests
         run: npm run test
+
+      - name: Build web app
+        run: npm run build -w @trustrespond/web
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://ci-build-placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-build-placeholder-anon-key-not-for-production-use
