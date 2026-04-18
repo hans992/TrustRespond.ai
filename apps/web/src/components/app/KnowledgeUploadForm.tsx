@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { GlowButton } from "@/components/ui/GlowButton";
 
 const dropzoneClass =
@@ -11,9 +11,18 @@ const alertBase = "rounded-xl border px-4 py-3 text-sm";
 const successClass = `${alertBase} border-emerald-500/25 bg-emerald-500/10 text-emerald-100`;
 const errorClass = `${alertBase} border-red-500/30 bg-red-950/40 text-red-100`;
 
+const clearLinkClass =
+  "shrink-0 text-sm text-red-400 underline-offset-2 transition hover:text-red-300 hover:underline";
+
 export function KnowledgeUploadForm() {
+  const formRef = useRef<HTMLFormElement>(null);
   const [pending, setPending] = useState(false);
   const [notice, setNotice] = useState<{ kind: "success" | "error"; text: string } | null>(null);
+
+  function clearSuccess() {
+    setNotice(null);
+    formRef.current?.reset();
+  }
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,7 +64,7 @@ export function KnowledgeUploadForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-6 space-y-6" encType="multipart/form-data">
+    <form ref={formRef} onSubmit={onSubmit} className="mt-6 space-y-6" encType="multipart/form-data">
       <label className={dropzoneClass}>
         <input
           name="file"
@@ -73,8 +82,19 @@ export function KnowledgeUploadForm() {
       <GlowButton type="submit" size="md" disabled={pending}>
         {pending ? "Uploading…" : "Upload PDF"}
       </GlowButton>
-      {notice ? (
-        <p role="alert" className={notice.kind === "success" ? successClass : errorClass}>
+      {notice?.kind === "success" ? (
+        <div className={successClass}>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+            <p role="alert" className="min-w-0 flex-1">
+              {notice.text}
+            </p>
+            <button type="button" onClick={clearSuccess} className={clearLinkClass}>
+              Clear
+            </button>
+          </div>
+        </div>
+      ) : notice?.kind === "error" ? (
+        <p role="alert" className={errorClass}>
           {notice.text}
         </p>
       ) : null}
