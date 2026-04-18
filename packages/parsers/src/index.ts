@@ -1,3 +1,4 @@
+import "./pdf-node-polyfills";
 import { PDFParse } from "pdf-parse";
 import ExcelJS from "exceljs";
 

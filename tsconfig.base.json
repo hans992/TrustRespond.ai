@@ -15,6 +15,7 @@
       "@trustrespond/db": ["packages/db/src/index.ts"],
       "@trustrespond/ai": ["packages/ai/src/index.ts"],
       "@trustrespond/parsers": ["packages/parsers/src/index.ts"],
+      "@trustrespond/parsers/pdf-node-polyfills": ["packages/parsers/src/pdf-node-polyfills.ts"],
       "@trustrespond/ui": ["packages/ui/src/index.tsx"],
       "@trustrespond/config": ["packages/config/src/index.ts"]
     }
