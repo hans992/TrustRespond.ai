@@ -15,9 +15,9 @@ const config: Config = {
           border: "var(--color-surface-border, #1E2D4A)",
         },
         accent: {
-          DEFAULT: "var(--color-accent, #0A84FF)",
-          light: "var(--color-accent-light, #34AAFF)",
-          glow: "var(--color-accent-glow, rgba(10,132,255,0.25))",
+          DEFAULT: "var(--color-accent, #30D158)",
+          light: "var(--color-accent-light, #4CD964)",
+          glow: "var(--color-accent-glow, rgba(48,209,88,0.25))",
         },
         emerald: {
           DEFAULT: "var(--color-emerald, #30D158)",
@@ -65,8 +65,8 @@ const config: Config = {
           "50%": { transform: "translateY(-8px)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(10,132,255,0.3)" },
-          "50%": { boxShadow: "0 0 40px rgba(10,132,255,0.6)" },
+          "0%, 100%": { boxShadow: "0 0 20px rgba(48,209,88,0.35)" },
+          "50%": { boxShadow: "0 0 40px rgba(48,209,88,0.55)" },
         },
         "gradient-shift": {
           "0%, 100%": { backgroundPosition: "0% 50%" },
@@ -89,7 +89,7 @@ const config: Config = {
       },
       boxShadow: {
         "glow-blue":
-          "0 0 30px rgba(10,132,255,0.3), 0 0 60px rgba(10,132,255,0.1)",
+          "0 0 30px rgba(48,209,88,0.3), 0 0 60px rgba(48,209,88,0.12)",
         "glow-emerald":
           "0 0 30px rgba(48,209,88,0.3), 0 0 60px rgba(48,209,88,0.1)",
         card: "0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)",

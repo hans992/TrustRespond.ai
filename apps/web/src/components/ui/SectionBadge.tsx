@@ -25,7 +25,7 @@ const dotColorClasses: Record<SectionBadgeColor, string> = {
   neutral: "bg-neutral-400",
 };
 
-export function SectionBadge({ children, color = "blue" }: SectionBadgeProps) {
+export function SectionBadge({ children, color = "emerald" }: SectionBadgeProps) {
   return (
     <span
       className={cn(

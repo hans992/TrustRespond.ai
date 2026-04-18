@@ -1,8 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 type AnimatedSectionDirection = "up" | "left" | "right" | "none";
 
@@ -15,7 +14,7 @@ type AnimatedSectionProps = {
   priority?: boolean;
 };
 
-const travel = 20;
+const travel = 16;
 
 export function AnimatedSection({
   children,
@@ -25,24 +24,48 @@ export function AnimatedSection({
   priority = false,
 }: AnimatedSectionProps) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const scrollInView = useInView(ref, { once: true, margin: "-80px" });
-  const visible = priority || scrollInView;
+  const [visible, setVisible] = useState(priority);
 
-  const initial = {
-    opacity: 0,
-    y: direction === "up" ? travel : 0,
-    x: direction === "left" ? -travel : direction === "right" ? travel : 0,
-  };
+  useEffect(() => {
+    if (priority) return;
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "-80px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [priority]);
+
+  const hiddenTransform =
+    direction === "up"
+      ? `translateY(${travel}px)`
+      : direction === "left"
+        ? `translateX(-${travel}px)`
+        : direction === "right"
+          ? `translateX(${travel}px)`
+          : "none";
 
   return (
-    <motion.div
+    <div
       ref={ref}
       className={className}
-      initial={initial}
-      animate={visible ? { opacity: 1, y: 0, x: 0 } : initial}
-      transition={{ duration: 0.5, delay, ease: [0.25, 0.1, 0.25, 1] }}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translate(0,0)" : hiddenTransform,
+        transitionProperty: "opacity, transform",
+        transitionDuration: "0.5s",
+        transitionTimingFunction: "cubic-bezier(0.25, 0.1, 0.25, 1)",
+        transitionDelay: `${delay}s`
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

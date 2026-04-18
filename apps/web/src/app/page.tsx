@@ -8,6 +8,7 @@ import { PricingSection } from "@/components/marketing/PricingSection";
 import { ComparisonTable } from "@/components/marketing/ComparisonTable";
 import { FAQSection } from "@/components/marketing/FAQSection";
 import { PrivacyAtAGlance } from "@/components/marketing/PrivacyAtAGlance";
+import Link from "next/link";
 import { GlowButton } from "@/components/ui/GlowButton";
 import { SectionBadge } from "@/components/ui/SectionBadge";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
@@ -19,43 +20,57 @@ export default function LandingPage() {
       <main className="relative z-10">
         <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pb-24 pt-28">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black_40%,transparent_100%)]" />
-          <div className="pointer-events-none absolute left-1/2 top-1/4 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-accent/10 blur-[120px]" />
-          <div className="pointer-events-none absolute bottom-1/4 right-1/4 h-[300px] w-[300px] rounded-full bg-emerald/10 blur-[100px]" />
-          <div className="pointer-events-none absolute bottom-1/3 left-1/4 h-[360px] w-[360px] rounded-full bg-emerald-900/20 blur-[100px]" />
+          <div className="pointer-events-none absolute left-1/2 top-1/4 hidden h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-emerald/8 blur-[120px] md:block" />
+          <div className="pointer-events-none absolute bottom-1/4 right-1/4 hidden h-[300px] w-[300px] rounded-full bg-emerald/10 blur-[100px] md:block" />
+          <div className="pointer-events-none absolute bottom-1/3 left-1/4 hidden h-[360px] w-[360px] rounded-full bg-emerald-900/15 blur-[100px] md:block" />
 
           <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center gap-10 text-center">
             <AnimatedSection delay={0} priority>
-              <SectionBadge color="blue">AI-Powered Security Automation</SectionBadge>
+              <SectionBadge color="emerald">AI-Powered Security Automation</SectionBadge>
             </AnimatedSection>
 
             <AnimatedSection delay={0.08} priority>
               <h1 className="text-5xl font-bold leading-[1.05] tracking-[-0.02em] md:text-7xl">
-                <span className="text-gradient-hero">Close Enterprise Deals</span>
+                <span className="text-gradient-hero">Automated Security Questionnaires</span>
                 <br />
-                <span className="text-gradient-hero-accent">14 Days Faster.</span>
+                <span className="text-gradient-hero-accent">in 2 Hours</span>
               </h1>
+              <p className="mt-4 text-lg font-medium text-slate-300 md:text-xl">
+                Close enterprise deals <span className="text-emerald-light">14 days faster</span>.
+              </p>
             </AnimatedSection>
 
             <AnimatedSection delay={0.16} priority>
-              <p className="max-w-2xl text-lg leading-relaxed text-slate-400 md:text-xl">
+              <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-300 md:text-xl">
                 TrustRespond reads your SOC 2 reports and security policies, then auto-completes your client&apos;s 200-row
                 Excel questionnaire in under 2 hours - without breaking a single formula or cell format.
               </p>
             </AnimatedSection>
 
             <AnimatedSection delay={0.24} priority>
-              <div className="mt-1 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-1 flex flex-col items-center gap-3">
                 <GlowButton variant="primary" size="lg" href="/auth/sign-up">
                   Start Free Trial
                 </GlowButton>
-                <GlowButton variant="secondary" size="lg" href="/demo">
-                  Book a Demo
-                </GlowButton>
+                <Link
+                  href="/demo"
+                  className="text-sm font-medium text-slate-400 underline-offset-4 transition-colors hover:text-emerald-light hover:underline"
+                >
+                  Book a demo
+                </Link>
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.28} priority>
+              <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 opacity-70 grayscale">
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">SOC 2 Type II</span>
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">ISO 27001</span>
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">GDPR-ready</span>
               </div>
             </AnimatedSection>
 
             <AnimatedSection delay={0.32} priority>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-400">
                 No credit card required · GDPR compliant · SOC 2 Type II in progress
               </p>
             </AnimatedSection>
@@ -78,31 +93,16 @@ export default function LandingPage() {
                         {
                           q: "Do you have a SOC 2 Type II report?",
                           a: "Yes - issued March 2026 by Prescient Assurance",
-                          confidence: 99,
                           status: "auto",
                         },
                         {
                           q: "What encryption standard is used for data at rest?",
                           a: "AES-256 encryption via AWS KMS",
-                          confidence: 97,
-                          status: "auto",
-                        },
-                        {
-                          q: "Describe your incident response process.",
-                          a: "Documented IRP with 4-hour RTO, tested quarterly...",
-                          confidence: 91,
-                          status: "auto",
-                        },
-                        {
-                          q: "Do you support SSO/SAML 2.0?",
-                          a: "Yes - Okta, Azure AD, Google Workspace",
-                          confidence: 95,
                           status: "auto",
                         },
                         {
                           q: "What is your data retention policy?",
                           a: null,
-                          confidence: 0,
                           status: "review",
                         },
                       ].map((row, i) => (
@@ -110,7 +110,7 @@ export default function LandingPage() {
                           key={i}
                           className={`flex items-start gap-3 rounded-xl px-3 py-2.5 text-xs ${
                             row.status === "review"
-                              ? "border border-yellow-500/20 bg-yellow-500/5"
+                              ? "border border-white/10 bg-slate-900/40"
                               : "bg-surface-elevated/50"
                           }`}
                         >
@@ -119,20 +119,18 @@ export default function LandingPage() {
                           {row.a ? (
                             <span className="flex-1 leading-relaxed text-emerald-light">{row.a}</span>
                           ) : (
-                            <span className="flex-1 italic text-yellow-400/70">Needs review</span>
-                          )}
-                          {row.confidence > 0 && (
-                            <span className="shrink-0 font-mono text-emerald/70">{row.confidence}%</span>
+                            <span className="flex-1 text-slate-400">Needs review</span>
                           )}
                         </div>
                       ))}
                     </div>
 
-                    <div className="flex items-center justify-between border-t border-white/10 px-4 py-2.5 text-xs text-slate-500">
+                    <div className="flex items-center justify-between border-t border-white/10 px-4 py-2.5 text-xs text-slate-400">
                       <span>
-                        200+ questions - <span className="text-emerald-light">94% auto-completed</span> - 14 need review
+                        200+ questions · <span className="font-medium text-emerald-light">94% auto-completed</span> · 14 need
+                        review
                       </span>
-                      <span className="cursor-pointer text-accent-light transition-colors hover:text-accent hover:underline">
+                      <span className="cursor-pointer text-emerald-light/90 transition-colors hover:text-emerald-light hover:underline">
                         Export .xlsx -&gt;
                       </span>
                     </div>

@@ -28,7 +28,7 @@ export default function WorkspacePage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-1">
-        <section className="glass-card noise-overlay rounded-3xl p-8">
+        <section id="knowledge" className="glass-card noise-overlay scroll-mt-28 rounded-3xl p-8">
           <h2 className="text-lg font-semibold text-slate-100">Knowledge Base Upload (PDF)</h2>
           <p className="mt-2 text-sm text-slate-400">
             SOC 2 reports, policies, and other PDFs for your knowledge base.
@@ -36,7 +36,7 @@ export default function WorkspacePage() {
           <KnowledgeUploadForm />
         </section>
 
-        <section className="glass-card noise-overlay rounded-3xl p-8">
+        <section id="questionnaire" className="glass-card noise-overlay scroll-mt-28 rounded-3xl p-8">
           <h2 className="text-lg font-semibold text-slate-100">Questionnaire Upload</h2>
           <p className="mt-2 text-sm text-slate-400">Vendor questionnaires as Excel, CSV, or Word.</p>
           <QuestionnaireUploadForm />

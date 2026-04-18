@@ -47,7 +47,7 @@ export function StatsBar() {
       <div ref={countRef} className="relative z-10 mx-auto grid max-w-5xl grid-cols-1 gap-10 px-6 text-center md:grid-cols-3 md:gap-8">
         <AnimatedSection direction="none">
           <div className="md:border-r md:border-white/10 md:pr-8">
-            <p className="text-4xl font-bold text-gradient-blue md:text-5xl">{count}%</p>
+            <p className="text-4xl font-bold text-gradient-emerald md:text-5xl">{count}%</p>
             <p className="mx-auto mt-2 max-w-[160px] text-sm leading-relaxed text-slate-400">
               Average time saved per questionnaire
             </p>
@@ -63,7 +63,7 @@ export function StatsBar() {
 
         <AnimatedSection delay={0.2} direction="none">
           <div>
-            <p className="text-4xl font-bold text-gradient-blue md:text-5xl">Zero</p>
+            <p className="text-4xl font-bold text-gradient-emerald md:text-5xl">Zero</p>
             <p className="mx-auto mt-2 max-w-[160px] text-sm leading-relaxed text-slate-400">
               Formatting errors in exported files
             </p>

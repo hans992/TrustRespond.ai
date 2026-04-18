@@ -6,21 +6,56 @@ import { Menu, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { GlowButton } from "../ui/GlowButton";
 
+const SECTION_IDS = ["how-it-works", "trust-center", "pricing", "security"] as const;
+
+type SectionId = (typeof SECTION_IDS)[number];
+
 type NavItem = {
   label: string;
-  sectionId: "features" | "how-it-works" | "pricing" | "security";
+  sectionId: SectionId;
 };
 
 const navItems: NavItem[] = [
-  { label: "Features", sectionId: "features" },
   { label: "How It Works", sectionId: "how-it-works" },
+  { label: "Trust Center", sectionId: "trust-center" },
   { label: "Pricing", sectionId: "pricing" },
   { label: "Security", sectionId: "security" },
 ];
 
+function useActiveSection(): SectionId | null {
+  const [active, setActive] = useState<SectionId | null>(null);
+
+  useEffect(() => {
+    const compute = () => {
+      const headerOffset = 96;
+      let current: SectionId | null = null;
+      for (const id of SECTION_IDS) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top <= headerOffset) {
+          current = id;
+        }
+      }
+      setActive(current);
+    };
+
+    compute();
+    window.addEventListener("scroll", compute, { passive: true });
+    window.addEventListener("resize", compute);
+    return () => {
+      window.removeEventListener("scroll", compute);
+      window.removeEventListener("resize", compute);
+    };
+  }, []);
+
+  return active;
+}
+
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const activeSection = useActiveSection();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,7 +67,7 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId: NavItem["sectionId"]) => {
+  const scrollToSection = (sectionId: SectionId) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
     setIsMobileMenuOpen(false);
   };
@@ -47,23 +82,28 @@ export function Navbar() {
     >
       <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6">
         <Link href="/" className="inline-flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-accent" />
+          <ShieldCheck className="h-5 w-5 text-emerald" />
           <span className="text-sm font-semibold text-neutral-50">
-            TrustRespond<span className="text-accent">.ai</span>
+            TrustRespond<span className="text-emerald-light">.ai</span>
           </span>
         </Link>
 
-        <div className="hidden items-center gap-8 md:flex">
-          {navItems.map((item) => (
-            <button
-              key={item.sectionId}
-              type="button"
-              onClick={() => scrollToSection(item.sectionId)}
-              className="cursor-pointer text-sm text-neutral-400 transition-all duration-200 ease-out hover:text-slate-100 hover:-translate-y-px"
-            >
-              {item.label}
-            </button>
-          ))}
+        <div className="hidden items-center gap-5 md:flex md:gap-6">
+          {navItems.map((item) => {
+            const isActive = activeSection === item.sectionId;
+            return (
+              <button
+                key={item.sectionId}
+                type="button"
+                onClick={() => scrollToSection(item.sectionId)}
+                className={`cursor-pointer border-b-2 border-transparent pb-0.5 text-sm transition-all duration-200 ease-out hover:text-slate-100 ${
+                  isActive ? "border-emerald font-medium text-slate-100" : "text-neutral-400 hover:-translate-y-px"
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </div>
 
         <div className="hidden items-center gap-2 md:flex">
@@ -95,16 +135,21 @@ export function Navbar() {
             className="w-full border-t border-white/10 glass md:hidden"
           >
             <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-4">
-              {navItems.map((item) => (
-                <button
-                  key={item.sectionId}
-                  type="button"
-                  onClick={() => scrollToSection(item.sectionId)}
-                  className="cursor-pointer rounded-lg px-2 py-2 text-left text-sm text-neutral-400 transition-all duration-200 ease-out hover:text-slate-100 hover:-translate-y-px"
-                >
-                  {item.label}
-                </button>
-              ))}
+              {navItems.map((item) => {
+                const isActive = activeSection === item.sectionId;
+                return (
+                  <button
+                    key={item.sectionId}
+                    type="button"
+                    onClick={() => scrollToSection(item.sectionId)}
+                    className={`cursor-pointer rounded-lg px-2 py-2 text-left text-sm transition-all duration-200 ease-out hover:text-slate-100 ${
+                      isActive ? "border-l-2 border-emerald bg-white/[0.04] pl-3 font-medium text-slate-100" : "text-neutral-400 hover:-translate-y-px"
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
               <div className="mt-2 flex items-center gap-2">
                 <GlowButton href="/auth/sign-in" variant="ghost" size="sm" className="flex-1 justify-center">
                   Log in

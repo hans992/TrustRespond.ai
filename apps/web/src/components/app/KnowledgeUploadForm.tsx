@@ -1,11 +1,8 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
+import { FileDropZone } from "@/components/ui/FileDropZone";
 import { GlowButton } from "@/components/ui/GlowButton";
-
-const dropzoneClass =
-  "group relative flex min-h-[140px] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 bg-slate-950/30 px-6 py-8 text-center transition hover:border-emerald/35 hover:bg-slate-950/50";
-const fileInputClass = "sr-only";
 
 const alertBase = "rounded-xl border px-4 py-3 text-sm";
 const successClass = `${alertBase} border-emerald-500/25 bg-emerald-500/10 text-emerald-100`;
@@ -65,20 +62,14 @@ export function KnowledgeUploadForm() {
 
   return (
     <form ref={formRef} onSubmit={onSubmit} className="mt-6 space-y-6" encType="multipart/form-data">
-      <label className={dropzoneClass}>
-        <input
-          name="file"
-          type="file"
-          accept=".pdf,application/pdf"
-          required
-          disabled={pending}
-          className={fileInputClass}
-        />
-        <span className="text-sm font-medium text-slate-200 group-hover:text-emerald-light">
-          Drop PDF here or click to browse
-        </span>
-        <span className="text-xs text-slate-500">Accepted: PDF · Max size per your plan</span>
-      </label>
+      <FileDropZone
+        name="file"
+        accept=".pdf,application/pdf"
+        required
+        disabled={pending}
+        title="Drop PDF here or click to browse"
+        hint="Accepted: PDF · Max size per your plan"
+      />
       <GlowButton type="submit" size="md" disabled={pending}>
         {pending ? "Uploading…" : "Upload PDF"}
       </GlowButton>

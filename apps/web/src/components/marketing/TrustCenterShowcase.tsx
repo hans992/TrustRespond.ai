@@ -28,11 +28,11 @@ const trustCenterFeatures = [
 
 export function TrustCenterShowcase() {
   return (
-    <section id="features" className="relative bg-surface-card/20 px-6 py-28 md:py-32">
+    <section id="trust-center" className="relative scroll-mt-24 bg-surface-card/20 px-6 py-28 md:py-32">
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-20">
         <AnimatedSection delay={0} direction="up">
           <div>
-            <SectionBadge color="blue">Trust Center</SectionBadge>
+            <SectionBadge color="emerald">Trust Center</SectionBadge>
             <h2 className="mt-4 text-4xl font-bold text-gradient-hero">Your public compliance page. Built automatically.</h2>
             <p className="mt-4 leading-relaxed text-slate-400">
               Every TrustRespond account includes a hosted Trust Center - a public-facing compliance page where prospects can

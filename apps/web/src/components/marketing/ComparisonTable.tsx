@@ -38,7 +38,7 @@ function renderCell(value: string) {
 
 export function ComparisonTable() {
   return (
-    <section id="comparison" className="relative bg-surface-card/20 px-6 py-28 md:py-32">
+    <section id="comparison" className="relative scroll-mt-24 bg-surface-card/20 px-6 py-28 md:py-32">
       <div className="mx-auto max-w-6xl">
         <AnimatedSection delay={0}>
           <SectionBadge color="neutral">Comparison</SectionBadge>

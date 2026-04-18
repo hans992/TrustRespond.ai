@@ -9,10 +9,10 @@ export const FOOTER_NAV_SECTIONS: FooterNavSection[] = [
   {
     title: "Product",
     links: [
-      { href: "/#features", label: "Features" },
+      { href: "/#comparison", label: "Features" },
       { href: "/#how-it-works", label: "How It Works" },
       { href: "/#pricing", label: "Pricing" },
-      { href: "/#features", label: "Trust Center" },
+      { href: "/#trust-center", label: "Trust Center" },
       { href: "/#security", label: "Security" }
     ]
   },

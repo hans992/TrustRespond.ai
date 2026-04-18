@@ -18,7 +18,7 @@ export function Footer() {
           className="pointer-events-none absolute -left-[10%] bottom-0 h-64 w-64 rounded-full bg-emerald-900/20 blur-3xl"
           aria-hidden
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-accent/5 via-accent/[0.07] to-accent/5" />
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald/[0.06] via-emerald/[0.09] to-emerald/[0.06]" />
         <div className="relative z-10 mx-auto max-w-2xl">
           <h2 className="text-3xl font-bold tracking-tight text-gradient-hero md:text-4xl">
             Ready to close your next enterprise deal faster?
@@ -26,24 +26,27 @@ export function Footer() {
           <p className="mt-5 text-lg leading-relaxed text-slate-400">
             Join EU SaaS teams who have stopped losing deals to slow security reviews.
           </p>
-          <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+          <div className="mt-10 flex flex-col items-center justify-center gap-3">
             <GlowButton variant="primary" size="lg" href="/auth/sign-up">
               Start Free Trial
             </GlowButton>
-            <GlowButton variant="secondary" size="lg" href="/demo">
-              Book a Demo
-            </GlowButton>
+            <Link
+              href="/demo"
+              className="text-sm font-medium text-slate-400 underline-offset-4 transition-colors hover:text-emerald-light hover:underline"
+            >
+              Book a demo
+            </Link>
           </div>
-          <p className="mt-5 text-sm text-slate-500">No credit card required · Cancel anytime</p>
+          <p className="mt-5 text-sm text-slate-400">No credit card required · Cancel anytime</p>
         </div>
       </div>
 
       <div className="mx-auto grid max-w-6xl grid-cols-2 gap-10 px-6 py-14 md:grid-cols-4 md:gap-12">
         <div>
           <div className="inline-flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-accent" />
+            <ShieldCheck className="h-5 w-5 text-emerald" />
             <span className="text-sm font-semibold text-neutral-50">
-              TrustRespond<span className="text-accent">.ai</span>
+              TrustRespond<span className="text-emerald-light">.ai</span>
             </span>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-slate-500">
@@ -112,7 +115,7 @@ export function Footer() {
             href="https://andrijanic.dev"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-accent-light transition-colors duration-200 hover:text-accent hover:underline"
+            className="text-emerald-light transition-colors duration-200 hover:text-emerald hover:underline"
           >
             andrijanic.dev
           </a>

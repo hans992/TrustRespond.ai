@@ -1,13 +1,9 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
+import { FileDropZone } from "@/components/ui/FileDropZone";
+import { Input } from "@/components/ui/Input";
 import { GlowButton } from "@/components/ui/GlowButton";
-
-const dropzoneClass =
-  "group relative flex min-h-[140px] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 bg-slate-950/30 px-6 py-8 text-center transition hover:border-emerald/35 hover:bg-slate-950/50";
-const fileInputClass = "sr-only";
-const textFieldClass =
-  "w-full max-w-md rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-slate-100 placeholder:text-slate-500 focus:border-emerald/30 focus:outline-none focus:ring-2 focus:ring-emerald-500/50";
 
 const alertBase = "rounded-xl border px-4 py-3 text-sm";
 const successClass = `${alertBase} border-emerald-500/25 bg-emerald-500/10 text-emerald-100`;
@@ -71,30 +67,18 @@ export function QuestionnaireUploadForm() {
 
   return (
     <form ref={formRef} onSubmit={onSubmit} className="mt-6 space-y-6" encType="multipart/form-data">
-      <label className="grid gap-2 text-sm">
+      <label className="grid max-w-md gap-2 text-sm">
         <span className="text-slate-300">Prospect name</span>
-        <input
-          name="prospectName"
-          type="text"
-          placeholder="Prospect name"
-          disabled={pending}
-          className={textFieldClass}
-        />
+        <Input name="prospectName" type="text" placeholder="Prospect name" disabled={pending} />
       </label>
-      <label className={dropzoneClass}>
-        <input
-          name="file"
-          type="file"
-          accept=".xlsx,.csv,.docx"
-          required
-          disabled={pending}
-          className={fileInputClass}
-        />
-        <span className="text-sm font-medium text-slate-200 group-hover:text-emerald-light">
-          Drop questionnaire file or click to browse
-        </span>
-        <span className="text-xs text-slate-500">Accepted: .xlsx, .csv, .docx</span>
-      </label>
+      <FileDropZone
+        name="file"
+        accept=".xlsx,.csv,.docx"
+        required
+        disabled={pending}
+        title="Drop questionnaire file or click to browse"
+        hint="Accepted: .xlsx, .csv, .docx · Max size per your plan"
+      />
       <GlowButton type="submit" size="md" disabled={pending}>
         {pending ? "Uploading…" : "Upload Questionnaire"}
       </GlowButton>

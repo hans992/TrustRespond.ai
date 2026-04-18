@@ -1,15 +1,11 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { HelpCircle, Loader2 } from "lucide-react";
 import { ConfidenceBadge } from "@trustrespond/ui";
+import { FileDropZone } from "@/components/ui/FileDropZone";
 import { GlowButton } from "@/components/ui/GlowButton";
+import { Input } from "@/components/ui/Input";
 import { useReviewWorkflow } from "@/hooks/useReviewWorkflow";
-
-const fieldClass =
-  "w-full max-w-md rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-slate-100 placeholder:text-slate-500 focus:border-emerald/30 focus:outline-none focus:ring-2 focus:ring-emerald-500/50";
-
-const fileDropClass =
-  "flex min-h-[100px] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 bg-slate-950/30 px-4 py-6 text-center transition hover:border-emerald/35";
 
 export function ReviewPageContent() {
   const {
@@ -34,6 +30,7 @@ export function ReviewPageContent() {
           className="mb-8 h-1 w-full overflow-hidden rounded-full bg-white/10"
           role="progressbar"
           aria-valuetext={busy}
+          aria-live="polite"
         >
           <div className="h-full w-1/3 animate-indeterminate-bar rounded-full bg-gradient-to-r from-transparent via-emerald to-transparent" />
         </div>
@@ -43,49 +40,55 @@ export function ReviewPageContent() {
         <h1 className="text-3xl font-semibold tracking-tight text-slate-100">
           Mapping Confirmation
         </h1>
-        <p className="mt-2 text-slate-400">
+        <p className="mt-2 text-slate-300">
           Upload your Excel questionnaire, confirm our mapping, then start AI generation.
         </p>
       </div>
 
       <section className="glass-card noise-overlay mb-6 rounded-3xl p-8">
-        <label className="mb-4 block text-sm font-medium text-slate-300">
+        <label className="mb-4 block text-sm font-medium text-slate-300" htmlFor="review-prospect">
           Prospect Name (optional)
         </label>
-        <input
+        <Input
+          id="review-prospect"
           value={prospectName}
           onChange={(e) => setProspectName(e.target.value)}
           placeholder="Fortune 500 Prospect"
-          className={`${fieldClass} mb-6`}
+          className="mb-6 max-w-md"
         />
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:flex-wrap">
-          <label className={`${fileDropClass} min-w-[200px] flex-1`}>
-            <span className="text-sm text-slate-400">Excel workbook (.xlsx)</span>
-            <input
-              type="file"
-              accept=".xlsx"
-              className="sr-only"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            />
-            <span className="text-xs text-slate-500">
-              {file ? file.name : "Choose a file"}
-            </span>
-          </label>
-          <GlowButton
-            variant="secondary"
-            onClick={handleDryRunParse}
-            disabled={!file || busy !== "idle"}
-            className="shrink-0"
-          >
-            {busy === "parsing" ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin text-emerald" aria-hidden />
-                Analyzing...
-              </>
-            ) : (
-              "Run Dry-Run Parse"
-            )}
-          </GlowButton>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:flex-wrap">
+          <FileDropZone
+            title="Excel workbook (.xlsx)"
+            hint="Accepted: .xlsx · Max size per your plan"
+            accept=".xlsx"
+            fileName={file ? file.name : "Choose a file"}
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            className="min-w-[200px] flex-1"
+            minHeightClass="min-h-[100px]"
+            aria-label="Upload Excel questionnaire workbook"
+          />
+          <div className="flex shrink-0 flex-col gap-1">
+            <GlowButton
+              variant="secondary"
+              onClick={handleDryRunParse}
+              disabled={!file || busy !== "idle"}
+              className="shrink-0"
+              aria-describedby="analyze-workbook-hint"
+            >
+              {busy === "parsing" ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin text-emerald" aria-hidden />
+                  Analyzing…
+                </>
+              ) : (
+                "Analyze Workbook"
+              )}
+            </GlowButton>
+            <p id="analyze-workbook-hint" className="max-w-[220px] text-xs leading-snug text-slate-400">
+              <HelpCircle className="mr-1 inline h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+              Detects question and answer columns only — no AI answers yet.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -184,7 +187,7 @@ export function ReviewPageContent() {
       ) : null}
 
       {downloadUrl ? (
-        <section className="glass-card noise-overlay rounded-3xl p-8">
+        <section id="export" className="glass-card noise-overlay scroll-mt-28 rounded-3xl p-8">
           <h2 className="text-lg font-semibold text-slate-100">Your Completed File Is Ready</h2>
           <div className="mt-6">
             <GlowButton href={downloadUrl} target="_blank" rel="noreferrer" size="lg">
@@ -198,6 +201,7 @@ export function ReviewPageContent() {
         <div
           className="mt-6 rounded-2xl border border-red-500/30 bg-red-950/25 px-5 py-4 text-sm text-red-200"
           role="alert"
+          aria-live="assertive"
         >
           {error}
         </div>

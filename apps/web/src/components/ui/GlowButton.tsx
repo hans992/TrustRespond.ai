@@ -72,7 +72,7 @@ export function GlowButton({
   if (href) {
     if (disabled) {
       return (
-        <span className={cn(classes, "pointer-events-none")} aria-disabled="true">
+        <span role="link" aria-disabled="true" tabIndex={-1} className={cn(classes, "pointer-events-none")}>
           {children}
         </span>
       );

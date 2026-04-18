@@ -5,15 +5,26 @@
 :root {
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter",
     system-ui, sans-serif;
-  --surface: #020617;
-  --surface-card: #0d1526;
-  --surface-elevated: #141f35;
-  --surface-border: #1e2d4a;
-  --accent-blue: #0a84ff;
-  --accent-emerald: #30d158;
+  /* Single source for Tailwind theme.extend colors (see tailwind.config.ts) */
+  --color-surface: #020617;
+  --color-surface-card: #0d1526;
+  --color-surface-elevated: #141f35;
+  --color-surface-border: #1e2d4a;
+  /* Primary accent = emerald (trust / success) */
+  --color-accent: #30d158;
+  --color-accent-light: #4cd964;
+  --color-accent-glow: rgba(48, 209, 88, 0.25);
+  --color-emerald: #30d158;
+  --color-emerald-light: #4cd964;
+  --color-emerald-glow: rgba(48, 209, 88, 0.2);
+  --color-neutral-50: #f5f5f7;
+  --color-neutral-100: #e8e8ed;
+  --color-neutral-400: #a1a1aa;
+  --color-neutral-600: #71717a;
+  --color-neutral-800: #1c1c1e;
   --text-primary: #f5f5f7;
-  --text-secondary: #86868b;
-  --text-tertiary: #48484a;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #52525b;
 }
 
 * {
@@ -27,8 +38,8 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #020617;
-  color: #f5f5f7;
+  background-color: var(--color-surface);
+  color: var(--text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -45,12 +56,12 @@ body::before {
   background:
     radial-gradient(
       ellipse 80% 50% at 20% -10%,
-      rgba(10, 132, 255, 0.12) 0%,
+      rgba(48, 209, 88, 0.1) 0%,
       transparent 60%
     ),
     radial-gradient(
       ellipse 60% 40% at 80% 110%,
-      rgba(48, 209, 88, 0.08) 0%,
+      rgba(48, 209, 88, 0.07) 0%,
       transparent 60%
     );
   pointer-events: none;
@@ -63,25 +74,26 @@ a {
 }
 
 .glass {
-  background: rgba(13, 21, 38, 0.72);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(13, 21, 38, 0.4);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .glass-card {
-  background: rgba(20, 31, 53, 0.62);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(20, 31, 53, 0.4);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.4),
     0 8px 24px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
+/* Legacy name; gradient matches primary accent (emerald) */
 .text-gradient-blue {
-  background: linear-gradient(135deg, #0a84ff 0%, #34aaff 50%, #5ac8fa 100%);
+  background: linear-gradient(135deg, #22c55e 0%, #30d158 45%, #4cd964 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

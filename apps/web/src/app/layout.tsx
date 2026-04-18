@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     locale: "en_EU",
     url: "https://trustrespond.ai",
     siteName: "TrustRespond.ai",
-    title: "Close Enterprise Deals 14 Days Faster | TrustRespond.ai",
+    title: "Automated Security Questionnaires in 2 Hours | TrustRespond.ai",
     description:
       "AI-powered security questionnaire automation for EU SaaS teams. Upload your policies. Get a completed Excel file in 2 hours.",
     images: [
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "TrustRespond.ai | Security Questionnaire Automation",
+    title: "TrustRespond.ai | Automated Security Questionnaires in 2 Hours",
     description:
       "Upload your SOC 2. Get a completed 200-row questionnaire in 2 hours. Built for EU SaaS.",
     images: ["/og-image.png"],
