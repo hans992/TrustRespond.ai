@@ -8,7 +8,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/google": "^3.0.63",
+    "@ai-sdk/google": "^3.0.64",
     "@supabase/supabase-js": "^2.103.0",
     "@trustrespond/db": "0.1.0",
     "@trustrespond/parsers": "0.1.0",
