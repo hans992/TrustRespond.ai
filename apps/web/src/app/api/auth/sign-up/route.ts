@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createServiceRoleSupabaseClient } from "@/lib/supabase/service-role";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -17,7 +18,17 @@ export async function POST(request: Request) {
     return NextResponse.redirect(new URL(`/auth/sign-up?error=${encodeURIComponent(error?.message ?? "Sign up failed")}`, request.url));
   }
 
-  const { data: org, error: orgError } = await supabase
+  const admin = createServiceRoleSupabaseClient();
+  if (!admin) {
+    return NextResponse.redirect(
+      new URL(
+        `/auth/sign-up?error=${encodeURIComponent("Server misconfigured: SUPABASE_SERVICE_ROLE_KEY is required for sign-up")}`,
+        request.url
+      )
+    );
+  }
+
+  const { data: org, error: orgError } = await admin
     .from("organizations")
     .insert({ name: orgName || "New Organization", plan: "free" })
     .select("id")
@@ -27,7 +38,7 @@ export async function POST(request: Request) {
     return NextResponse.redirect(new URL(`/auth/sign-up?error=${encodeURIComponent(orgError?.message ?? "Org setup failed")}`, request.url));
   }
 
-  const { error: userError } = await supabase.from("users").insert({
+  const { error: userError } = await admin.from("users").insert({
     id: data.user.id,
     org_id: org.id,
     email,
